@@ -3,7 +3,7 @@
 
 # This EDA script is for their episodes reviewing DS9 -----
 
-# Latest update: v1.1.1 (18th Feb 2023) -------------------
+# Latest update: v1.2.1 (24th Feb 2023) -------------------
 
 # Variable key:
 # Andy_rating/Matt_rating: rating out of 10 'Andys' for each episode.
@@ -86,6 +86,8 @@ data <-
                                                             "Other")))))))
 
 
+
+
 # summarise the hosts rating data -------------------
 
 host_rating_data <- 
@@ -116,6 +118,24 @@ pivot_MVC %>%
   group_by(Character) %>% 
   summarise(count = n()) %>% 
   arrange(desc(count)))
+
+# convert Andy_Watch and Matt_Watch categories into joint int value and new category ----
+data <- 
+data %>% 
+  mutate(A.Watch_score = ifelse(Andy_Watch == "YES", 2, 
+                              ifelse(Andy_Watch == "NEUTRAL", 1, 
+                                     0))) %>% 
+  mutate(M.Watch_score = ifelse(Matt_Watch == "YES", 2, 
+                                ifelse(Matt_Watch == "NEUTRAL", 1, 
+                                       0))) %>% 
+  mutate(J.Watch_score = A.Watch_score + M.Watch_score) %>% 
+  mutate(Watchability = factor(ifelse(J.Watch_score == 4, "WATCH IT!",
+                               ifelse(J.Watch_score == 3, "NOT ESSENTIAL",
+                                      ifelse(J.Watch_score == 2, "MEH",
+                                             ifelse(J.Watch_score == 1, "SKIP",
+                                                    "AVOID")))))) %>% 
+  select(-A.Watch_score, -M.Watch_score)
+
 
 # generate summary statistics ---------------------------------
 (summary_stats <- 
@@ -411,4 +431,7 @@ patch_plt + plot_annotation(title = 'DEEP SPACE NINE',
                             caption = "BROUGHT TO YOU BY ODO'S SMOOTH BROW. GITHUB: https://github.com/TristanLouthRobins",theme=theme_trek_header())  
 
 
-
+data %>% 
+  ggplot() +
+  geom_point(aes(x = J.Watch_score, y = TNC)) +
+  ylim(0,10)
