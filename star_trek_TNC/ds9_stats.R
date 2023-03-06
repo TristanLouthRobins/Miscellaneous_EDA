@@ -3,7 +3,7 @@
 
 # This EDA script is for their episodes reviewing DS9 -----
 
-# Latest update: v1.2.1 (24th Feb 2023) -------------------
+# Latest update: v1.2.2 (6th March 2023) -------------------
 
 # Variable key:
 # Andy_rating/Matt_rating: rating out of 10 'Andys' for each episode.
@@ -22,7 +22,7 @@ data <- read_csv("data/tnc_ds9_stats.csv") %>%
 # first season data tidy ------------------------------------------------
 
 data <- 
-data %>% 
+  data %>% 
   rename("Episode_name" = "Ep",
          "Episode_number" = "n", 
          "Andy_rating" = "Rating - Andy",
@@ -114,41 +114,41 @@ pivot_MVC <-
   select(Host, Character)
 
 (MVC_leaderboard <- 
-pivot_MVC %>% 
-  group_by(Character) %>% 
-  summarise(count = n()) %>% 
-  arrange(desc(count)))
+    pivot_MVC %>% 
+    group_by(Character) %>% 
+    summarise(count = n()) %>% 
+    arrange(desc(count)))
 
 # convert Andy_Watch and Matt_Watch categories into joint int value and new category ----
 data <- 
-data %>% 
+  data %>% 
   mutate(A.Watch_score = ifelse(Andy_Watch == "YES", 2, 
-                              ifelse(Andy_Watch == "NEUTRAL", 1, 
-                                     0))) %>% 
+                                ifelse(Andy_Watch == "NEUTRAL", 1, 
+                                       0))) %>% 
   mutate(M.Watch_score = ifelse(Matt_Watch == "YES", 2, 
                                 ifelse(Matt_Watch == "NEUTRAL", 1, 
                                        0))) %>% 
   mutate(J.Watch_score = A.Watch_score + M.Watch_score) %>% 
   mutate(Watchability = factor(ifelse(J.Watch_score == 4, "WATCH IT!",
-                               ifelse(J.Watch_score == 3, "NOT ESSENTIAL",
-                                      ifelse(J.Watch_score == 2, "MEH",
-                                             ifelse(J.Watch_score == 1, "SKIP",
-                                                    "AVOID")))))) %>% 
+                                      ifelse(J.Watch_score == 3, "NOT ESSENTIAL",
+                                             ifelse(J.Watch_score == 2, "MEH",
+                                                    ifelse(J.Watch_score == 1, "SKIP",
+                                                           "AVOID")))))) %>% 
   select(-A.Watch_score, -M.Watch_score)
 
 
 # generate summary statistics ---------------------------------
 (summary_stats <- 
-  data %>% 
-  slice(0:eps_watched) %>% 
-  pivot_longer(cols = c("Andy_rating", "Matt_rating", "TNC", "IMDB"), names_to = "Rating", values_to = "Value") %>% 
-  group_by(Rating) %>% 
-  summarise(min = min(Value),
-            max = max(Value),
-            mean = mean(Value),
-            sd = sd(Value),
-            median = median(Value)) %>% 
-  arrange(desc(mean)))
+   data %>% 
+   slice(0:eps_watched) %>% 
+   pivot_longer(cols = c("Andy_rating", "Matt_rating", "TNC", "IMDB"), names_to = "Rating", values_to = "Value") %>% 
+   group_by(Rating) %>% 
+   summarise(min = min(Value),
+             max = max(Value),
+             mean = mean(Value),
+             sd = sd(Value),
+             median = median(Value)) %>% 
+   arrange(desc(mean)))
 
 # top 3, bottom 3 eps within given season
 top3 <- function(season, who){
@@ -166,7 +166,7 @@ bot3 <- function(season, who){
     arrange({{who}}) %>% 
     head(n=3)
 }
-  
+
 (top_TNC <- top3(1,TNC))
 (top_IMDB <- top3(1,IMDB))
 
@@ -236,19 +236,19 @@ images <- image_df$images_cropped
 
 # merge cropped image df with corresponding MVC in leaderboard -----------------
 MVC_leaderboard <- 
-MVC_leaderboard %>% 
+  MVC_leaderboard %>% 
   mutate(Character = toupper(Character)) %>% 
   mutate(img = ifelse(Character == "BASHIR", images[1], 
-                        ifelse(Character == "DAX", images[2], 
-                               ifelse(Character == "JAKE", images[3],
-                                      ifelse(Character == "KIRA", images[4],
-                                              ifelse(Character == "O'BRIEN", images[5], 
-                                                     ifelse(Character == "ODO", images[6], 
-                                                            ifelse(Character == "QUARK", images[7], 
-                                                                   ifelse(Character == "SISKO", images[8], 
-                                                                          ifelse(Character == "NOG", images[9], 
-                                                                                 ifelse(Character == "GARAK", images[10],
-                                                                                        images[11])))))))))))
+                      ifelse(Character == "DAX", images[2], 
+                             ifelse(Character == "JAKE", images[3],
+                                    ifelse(Character == "KIRA", images[4],
+                                           ifelse(Character == "O'BRIEN", images[5], 
+                                                  ifelse(Character == "ODO", images[6], 
+                                                         ifelse(Character == "QUARK", images[7], 
+                                                                ifelse(Character == "SISKO", images[8], 
+                                                                       ifelse(Character == "NOG", images[9], 
+                                                                              ifelse(Character == "GARAK", images[10],
+                                                                                     images[11])))))))))))
 
 
 # define DS9 viz themes --------------------------------------------
@@ -256,13 +256,13 @@ theme_trek <- function(){
   theme(
     text = element_text(family = "Antonio", colour = "#FFFFFF"),
     plot.margin = margin(5,2,5,2, "mm"),
-    plot.background = element_rect(fill = "#000000"),
-    plot.title = element_text(family = "Federation", size = 24, colour = "#F7B05A", vjust = 0),
-    plot.subtitle = element_text(family = "Antonio", face = "bold", size = 18, colour = "#99CCFF"),
-    axis.title.x = element_text(family = "Antonio", face = "bold", size = 14),
-    axis.title.y = element_text(family = "Antonio", face = "bold", size = 14),
-    axis.text.x = element_text(family = "Antonio", face = "bold", size = 14, colour = "#646DCC"),
-    axis.text.y = element_text(family = "Antonio", face = "bold", size = 18, colour = "#646DCC"),
+    plot.background = element_rect(fill = "#000000", colour = "#99CCFF"),
+    plot.title = element_text(family = "Federation", size = 20, colour = "#F7B05A", vjust = 0),
+    plot.subtitle = element_text(family = "Antonio", face = "bold", size = 14, colour = "#99CCFF"),
+    axis.title.x = element_text(family = "Antonio", face = "bold", size = 12),
+    axis.title.y = element_text(family = "Antonio", face = "bold", size = 12),
+    axis.text.x = element_text(family = "Antonio", face = "bold", size = 10, colour = "#646DCC"),
+    axis.text.y = element_text(family = "Antonio", face = "bold", size = 10, colour = "#646DCC"),
     axis.ticks.x = element_blank(),
     axis.ticks.y = element_blank(),
     panel.background = element_rect(fill = "#000000"),
@@ -280,13 +280,13 @@ theme_trek_header <- function(){
   theme(
     text = element_text(family = "Antonio", colour = "#FFFFFF"),
     plot.margin = margin(5,2,5,2, "mm"),
-    plot.background = element_rect(fill = "#000000"),
-    plot.title = element_text(family = "Federation", size = 36, colour = "#F7B05A", vjust = 0),
+    plot.background = element_rect(fill = "#000000", colour = "000000"),
+    plot.title = element_text(family = "Federation", size = 24, colour = "#F7B05A", vjust = 0),
     plot.subtitle = element_text(family = "Antonio", face = "bold", size = 18, colour = "#99CCFF"),
-    axis.title.x = element_text(family = "Antonio", face = "bold", size = 14),
-    axis.title.y = element_text(family = "Antonio", face = "bold", size = 14),
+    axis.title.x = element_text(family = "Antonio", face = "bold", size = 12),
+    axis.title.y = element_text(family = "Antonio", face = "bold", size = 12),
     axis.text.x = element_text(family = "Antonio", face = "bold", size = 14, colour = "#646DCC"),
-    axis.text.y = element_text(family = "Antonio", face = "bold", size = 18, colour = "#646DCC"),
+    axis.text.y = element_text(family = "Antonio", face = "bold", size = 14, colour = "#646DCC"),
     axis.ticks.x = element_blank(),
     axis.ticks.y = element_blank(),
     panel.background = element_rect(fill = "#000000"),
@@ -298,38 +298,39 @@ theme_trek_header <- function(){
   )
 }
 
-  
+
 # viz for bar plot of the DS9 season 1 MVC leaderboard ------------------
 
 sub_title <- glue("SEASON ONE: MVC VOTE LEADERBOARD ({eps_watched}/19 EPISODES)")
 current_ep <- data$Episode_name[eps_watched]
+current_ep_num <- data$Episode_number[eps_watched]
 
 MVC_plt <- 
-MVC_leaderboard %>% 
+  MVC_leaderboard %>% 
   ggplot(aes(x=count, y=fct_reorder(Character, count))) +
   geom_bar(stat = "identity", fill = "#9C9CFF") +
   geom_image(aes(x=count, y=fct_reorder(Character, count), image = img), size = 0.1) +
-  geom_text(aes(x=6.5, y=5, label = toupper(glue("+ 2 VOTES ({current_ep})")), family = "Antonio"), color = "#ED884C", size = 5) +
+  geom_text(aes(x=8.5, y=8, label = toupper(glue("+ 2 VOTES ({current_ep})")), family = "Antonio"), color = "#ED884C", size = 4) +
   labs(
-       subtitle = sub_title,
-       x = element_blank(),
-       y = element_blank()) +
+    subtitle = sub_title,
+    x = element_blank(),
+    y = element_blank()) +
   scale_x_continuous(limits = c(0, 10), breaks = c(1,2,3,4,5,6,7,8,9,10)) +
   theme_trek()
 
 # viz for individual host rating data -----------------------------------
 
 host_rating_plt <- 
-host_rating_data %>% 
+  host_rating_data %>% 
   mutate(Episode_name = toupper(Episode_name)) %>% 
   ggplot(aes(x=Rating, y=fct_reorder(Episode_name, Episode_number), fill = Host)) +
   geom_bar(stat = "identity", position = "dodge") +
-#  geom_vline(xintercept = summary_stats$mean[2], colour = "#FFFF33", linetype = "dashed", size = 1, alpha = 0.7) +
-#  geom_vline(xintercept = summary_stats$mean[4], colour = "#ED884C", linetype = "dashed", size = 1, alpha = 0.7) +
+  #  geom_vline(xintercept = summary_stats$mean[2], colour = "#FFFF33", linetype = "dashed", size = 1, alpha = 0.7) +
+  #  geom_vline(xintercept = summary_stats$mean[4], colour = "#ED884C", linetype = "dashed", size = 1, alpha = 0.7) +
   labs(
-       subtitle = "SEASON ONE: EPISODE RATINGS - INDIVIDUAL",
-       x = element_blank(),
-       y = element_blank()) +
+    subtitle = "SEASON ONE: EPISODE RATINGS - INDIVIDUAL",
+    x = element_blank(),
+    y = element_blank()) +
   scale_x_continuous(limits = c(0, 10), breaks = c(0,2,4,6,8,10))  +
   scale_fill_manual(values = c("#FFFF33", "#ED884C"),
                     labels = c("ANDY", "MATT")) +
@@ -342,14 +343,14 @@ host_rating_data %>%
 # viz for TNC joint ratings in descending order of ranking -----------------------------------
 
 joint_rating_plt_desc <- 
-data %>% 
+  data %>% 
   mutate(Episode_name = toupper(Episode_name)) %>% 
   ggplot(aes(x=TNC, y=fct_reorder(Episode_name, TNC), fill = as.factor(TNC))) +
   geom_bar(stat = "identity", position = "dodge") +
   labs(
-       subtitle = "SEASON ONE: EPISODE RATINGS - JOINT",
-       x = element_blank(),
-       y = element_blank()) +
+    subtitle = "SEASON ONE: EPISODE RATINGS - JOINT",
+    x = element_blank(),
+    y = element_blank()) +
   scale_x_continuous(limits = c(0, 10), breaks = c(0,1,2,3,4,5,6,7,8,9,10)) +
   scale_fill_brewer(palette = "Spectral") +
   theme_trek() +
@@ -367,12 +368,12 @@ joint_vs_imdb_rating_plt <-
   mutate(Episode_name = toupper(Episode_name)) %>% 
   ggplot(aes(x=Rating, y=fct_reorder(Episode_name, Episode_number), fill = Joint)) +
   geom_bar(stat = "identity", position = "dodge") +
-#  geom_vline(xintercept = summary_stats$mean[1], colour = "#97567B", linetype = "dashed", size = 1, alpha = 0.7) +
-#  geom_vline(xintercept = summary_stats$mean[3], colour = "#72E2E4", linetype = "dashed", size = 1, alpha = 0.7) +
+  #  geom_vline(xintercept = summary_stats$mean[1], colour = "#97567B", linetype = "dashed", size = 1, alpha = 0.7) +
+  #  geom_vline(xintercept = summary_stats$mean[3], colour = "#72E2E4", linetype = "dashed", size = 1, alpha = 0.7) +
   labs(
-       subtitle = "SEASON ONE: EPISODE RATINGS - TNC VS IMDb",
-       x = element_blank(),
-       y = element_blank()) +
+    subtitle = "SEASON ONE: EPISODE RATINGS - TNC VS IMDb",
+    x = element_blank(),
+    y = element_blank()) +
   scale_x_continuous(limits = c(0, 10), breaks = c(0,2,4,6,8,10)) +
   scale_fill_manual(values = c("#97567B", "#72E2E4"),
                     labels = c("IMDb", "TNC")) +
@@ -390,9 +391,9 @@ joint_rating_plt_seq <-
   ggplot(aes(x=TNC, y=fct_reorder(Episode_name, Episode_number), fill = as.factor(TNC))) +
   geom_bar(stat = "identity", position = "dodge") +
   labs(
-       subtitle = "SEASON ONE: EPISODE RATINGS - JOINT",
-       x = element_blank(),
-       y = element_blank()) +
+    subtitle = "SEASON ONE: EPISODE RATINGS - JOINT",
+    x = element_blank(),
+    y = element_blank()) +
   scale_x_continuous(limits = c(0, 10), breaks = c(0,1,2,3,4,5,6,7,8,9,10)) +
   scale_fill_brewer(palette = "Spectral") +
   theme_trek() +
@@ -412,26 +413,14 @@ joint_rating_plt_desc
 
 library(patchwork) 
 
-# define a blank plot template with the DS9 typeface and subtitle ------------ 
-
-template <- 
-ggplot() +
-  geom_point() +
-  labs(title = "DEEP SPACE NINE") +
-  theme_trek()
-
 # patchwork everything together and add a subtitle ---------------------------
 
 patch_plt <- 
-(host_rating_plt / joint_vs_imdb_rating_plt) |
+  (host_rating_plt / joint_vs_imdb_rating_plt) |
   (MVC_plt)
 
 patch_plt + plot_annotation(title = 'DEEP SPACE NINE', 
                             subtitle = "STAR TREK: THE NEXT CONVERSATION",
-                            caption = "BROUGHT TO YOU BY ODO'S SMOOTH BROW. GITHUB: https://github.com/TristanLouthRobins",theme=theme_trek_header())  
+                            caption = "BROUGHT TO YOU BY TRISTAN LOUTH-ROBINS. GITHUB: https://github.com/TristanLouthRobins",theme=theme_trek_header())  
 
-
-data %>% 
-  ggplot() +
-  geom_point(aes(x = J.Watch_score, y = TNC)) +
-  ylim(0,10)
+ggsave("exports/3panel.png", width = 12, height = 8) 
