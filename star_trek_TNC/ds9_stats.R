@@ -3,7 +3,7 @@
 
 # This EDA script is for their episodes reviewing DS9 -----
 
-# Latest update: v1.2.2 (6th March 2023) -------------------
+# Latest update: v1.2.2 (15th March 2023) -------------------
 
 # Variable key:
 # Andy_rating/Matt_rating: rating out of 10 'Andys' for each episode.
@@ -15,7 +15,8 @@
 # load Tidyverse for data tidying and import current dataset ------------
 library(tidyverse)
 
-data <- read_csv("data/tnc_ds9_stats.csv") %>% 
+data <- read_csv("data/tnc_stats.csv") %>% 
+  filter(Series == "DS9") %>%
   slice(1:19)
 
 # tidy data -------------------------------------------------------------
@@ -423,4 +424,179 @@ patch_plt + plot_annotation(title = 'DEEP SPACE NINE',
                             subtitle = "STAR TREK: THE NEXT CONVERSATION",
                             caption = "BROUGHT TO YOU BY TRISTAN LOUTH-ROBINS. GITHUB: https://github.com/TristanLouthRobins",theme=theme_trek_header())  
 
-ggsave("exports/3panel.png", width = 12, height = 8) 
+ggsave("exports/3panel.png", width = 12, height = 8, units = "cm") 
+
+# generate plots of the MVC ranking trend ------------------------------------
+
+library(ggbump)
+
+tally <- 
+  data %>% 
+  slice(0:eps_watched) %>% 
+  pivot_longer(cols = c("Andy_MVC", "Matt_MVC"), names_to = "Host") %>% 
+  rename("Character" = "value") %>% 
+  select(Episode_name, Episode_number, Host, Character) %>% 
+  group_by(Episode_name, Episode_number, Character) %>% 
+  summarise(count = n()) %>% 
+  arrange(Episode_number) %>% 
+  pivot_wider(names_from = Character, values_from = count, values_fill = 0) %>% 
+  pivot_longer(cols = 3:11, names_to = "Character", values_to = "count") %>% 
+  group_by(Character) %>% 
+  mutate(total = cumsum(count),
+         Character = toupper(factor(Character)),
+         Episode_number = as.integer(Episode_number)) %>% 
+  mutate(img = ifelse(Character == "BASHIR", images[1], 
+                      ifelse(Character == "DAX", images[2], 
+                             ifelse(Character == "JAKE", images[3],
+                                    ifelse(Character == "KIRA", images[4],
+                                           ifelse(Character == "O'BRIEN", images[5], 
+                                                  ifelse(Character == "ODO", images[6], 
+                                                         ifelse(Character == "QUARK", images[7], 
+                                                                ifelse(Character == "SISKO", images[8], 
+                                                                       ifelse(Character == "NOG", images[9], 
+                                                                              ifelse(Character == "GARAK", images[10],
+                                                                                     images[11])))))))))))
+
+
+ranks <- tally %>% 
+  group_by(Episode_number) %>% 
+  mutate(rank = rank(total, ties.method = "first")) %>% 
+  select(-count, -total)
+
+sel_chr <- c("BASHIR", "DAX", "O'BRIEN", 
+             "KIRA", "SISKO", "JAKE", 
+             "NOG", "ODO", "OTHER")
+
+current_rank <- 
+  ranks %>% 
+  mutate(Character = as_factor(Character)) %>% 
+  filter(Episode_number == current_ep_num) %>% 
+  arrange(desc(rank)) 
+
+current_rank <- current_rank$Character
+
+pos <- ranks %>% 
+  filter(Episode_number == current_ep_num, Character %in% sel_chr)
+
+lcars_pal1 <- c("#FF9C00", "#FFFF33", "#CC99CC", 
+                "#DDFFFF", "#3399FF", "#99FF66", 
+                "#FFCC33", "#31C924", "#4D6184")
+
+sub_title <- glue("SEASON ONE: MVC VOTE RANKING TREND ({eps_watched}/19 EPISODES)")
+
+# Highlight particular rank
+hlt_rank_plt <- function(selection){
+  deselect_ranks <- ranks %>% 
+    filter(Character %in% sel_chr) %>% 
+    filter(Character != selection)
+  
+  select_ranks <- ranks %>% 
+    filter(Character %in% sel_chr) %>% 
+    filter(Character == selection)
+  
+  ggplot() +
+    geom_bump(data = deselect_ranks, aes(x=Episode_number, y=rank, colour = fct_reorder(Character, rank)), size = 0.5, alpha = 0.25) +
+    geom_bump(data = select_ranks, aes(x=Episode_number, y=rank, colour = fct_reorder(Character, rank)), size = 1, alpha = 0.5) +
+    scale_color_manual(values = lcars_pal1) +
+    geom_image(data=pos, aes(x=Episode_number + 0.5, y=rank, image = img), size = 0.05) +
+    theme_trek() +
+    labs(
+      subtitle = sub_title,
+      x = element_blank(),
+      y = element_blank()) +
+    theme(axis.text.y = element_blank(),
+          legend.title = element_blank(),
+          legend.key = element_rect(fill = "#000000", color = NA),
+          legend.position = "right") +
+    scale_x_continuous(limits = c(0, 20), breaks = c(1:19)) 
+} 
+
+# MVC_plt
+MVC_ranks_plt <- hlt_rank_plt("O'BRIEN")
+
+MVC_votes_rank  <- MVC_plt | MVC_ranks_plt
+
+MVC_votes_rank + plot_annotation(title = 'DEEP SPACE NINE', 
+                                 subtitle = "STAR TREK: THE NEXT CONVERSATION",
+                                 caption = "BROUGHT TO YOU BY TRISTAN LOUTH-ROBINS. GITHUB: https://github.com/TristanLouthRobins",theme=theme_trek_header())  
+
+
+ggsave("exports/ranks.png", width = 16, height = 8, units = "cm") 
+
+# -------------------------------------------------
+# -------------------------------------------------
+
+# Cluster analysis of episode rankings
+library(ggrepel)
+
+k_data <- data %>% slice(0:(current_ep_num-1)) %>%  select("Episode_name", "Matt_rating", "Andy_rating", "TNC", "IMDB")
+episodes <- k_data[,1]
+tnc_score <- k_data[,4] # Here, we're grabbing the TNC score as an un-scaled variable
+imdb_score <- k_data[,5] # As above, but with IMDB
+joint_avg <- (tnc_score + imdb_score) / 2 
+k_data <- k_data[2:5]
+scaled_k_data <- scale(k_data)
+model <- kmeans(scaled_k_data, centers = 4)
+cluster <- model$cluster
+
+cluster <- factor(cluster, levels = c(3,4,2,1))
+
+scaled_k_data <- cbind(scaled_k_data, cluster)
+complete_k_data <- cbind(episodes, scaled_k_data, joint_avg) %>% 
+  rename(joint = 7)
+
+stellar_palette <- c("#66CCFF", "#99FF66", "#FF9C00", "#9C9CFF")
+
+theme_trek_clust <- function(){
+  theme(
+    text = element_text(family = "Antonio", colour = "#FFFFFF"),
+    plot.margin = margin(5,2,5,2, "mm"),
+    plot.background = element_rect(fill = "#000000", colour = "#99CCFF"),
+    plot.title = element_text(family = "Federation", size = 28, colour = "#F7B05A", vjust = 0),
+    plot.subtitle = element_text(family = "Antonio", face = "bold", size = 14, colour = "#99CCFF"),
+    axis.title.x = element_text(family = "Antonio", face = "bold", size = 12),
+    axis.title.y = element_text(family = "Antonio", face = "bold", size = 12),
+    axis.text.x = element_text(family = "Antonio", face = "bold", size = 10, colour = "#646DCC"),
+    axis.text.y = element_text(family = "Antonio", face = "bold", size = 10, colour = "#646DCC"),
+    axis.ticks.x = element_blank(),
+    axis.ticks.y = element_blank(),
+    panel.background = element_rect(fill = "#000000"),
+    legend.title = element_text(family = "Antonio", size = 14, colour = "#E7FFFF"),
+    legend.text = element_text(family = "Antonio", size = 12, colour = "#E7FFFF"),
+    legend.background = element_rect(fill = "#000000"),
+    panel.grid.major = element_line(colour = "#4C4D47"), 
+    panel.grid.minor = element_blank()
+  )
+}
+
+complete_k_data %>% 
+  ggplot() +
+  stat_density_2d(aes(x=TNC, y=IMDB), colour = "#46616E") +
+  annotate("text", x=1, y=1, size = 8, colour = "#FFCC33", label = "DABO!", fontface = 2) +
+  annotate("text", x=0, y=0, size = 8, colour = "#FFCC33", label = "NEUTRAL ZONE", fontface = 2) +
+  annotate("text", x=-1, y=-1, size = 8, colour = "#FFCC33", label = "BADLANDS", fontface = 2) +
+  annotate("text", x=-2, y=-2, size = 8, colour = "#FFCC33", label = "HELL", fontface = 2) +
+  geom_point(aes(x=TNC, y=IMDB, colour = factor(cluster), size = joint)) +
+  geom_label_repel(aes(x=TNC, y=IMDB, label=Episode_name),
+                   colour = "#FFFF33",
+                   fill = "black",
+                   max.overlaps = 7,
+                   nudge_x = 0,
+                   nudge_y = 0.25,
+                   segment.linetype = 1,
+                   segment.curvature = -0.1,
+                   segment.ncp = 3,
+                   segment.angle = 20,
+                   alpha = 0.7) +
+  scale_color_manual(values = stellar_palette) +
+  labs(title = "DEEP SPACE NINE",
+       subtitle = "EPISODE GUIDE: SEASON 1 QUADRANT (K-MEANS CLUSTER MODEL)",
+       caption = "BROUGHT TO YOU BY TRISTAN LOUTH-ROBINS. GITHUB: https://github.com/TristanLouthRobins",
+       x = "", y = "") +
+  theme_trek_clust() +
+  theme(legend.title = element_blank(),
+        legend.position = "none",
+        legend.key = element_rect(fill = "#000000", color = NA)) 
+
+
+ggsave("exports/ep_cluster_season1.png", width = 36, height = 24, units = "cm") 
