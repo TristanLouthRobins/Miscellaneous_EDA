@@ -15,7 +15,7 @@
 # load Tidyverse for data tidying and import current dataset ------------
 library(tidyverse)
 
-data <- read_csv("data/tnc_stats.csv") %>% 
+data <- read_csv("star_trek_TNC/data/tnc_stats.csv") %>% 
   filter(Series == "DS9") %>%
   slice(1:19)
 
@@ -215,17 +215,17 @@ library(glue)
 # create a vector of image 'headshots' of DS9 characters --------
 
 images <- c(
-  "images/headshots/s1/bashir.jpg",
-  "images/headshots/s1/dax.jpg",
-  "images/headshots/s1/jake.jpg",
-  "images/headshots/s1/kira.jpg",
-  "images/headshots/s1/obrien.jpg",
-  "images/headshots/s1/odo.jpg",
-  "images/headshots/s1/quark.jpg",
-  "images/headshots/s1/sisko.jpg",
-  "images/headshots/s1/nog.jpg",
-  "images/headshots/s1/garak.jpg",
-  "images/headshots/s1/other.jpg"
+  "star_trek_TNC/images/headshots/s1/bashir.jpg",
+  "star_trek_TNC/images/headshots/s1/dax.jpg",
+  "star_trek_TNC/images/headshots/s1/jake.jpg",
+  "star_trek_TNC/images/headshots/s1/kira.jpg",
+  "star_trek_TNC/images/headshots/s1/obrien.jpg",
+  "star_trek_TNC/images/headshots/s1/odo.jpg",
+  "star_trek_TNC/images/headshots/s1/quark.jpg",
+  "star_trek_TNC/images/headshots/s1/sisko.jpg",
+  "star_trek_TNC/images/headshots/s1/nog.jpg",
+  "star_trek_TNC/images/headshots/s1/garak.jpg",
+  "star_trek_TNC/images/headshots/s1/other.jpg"
 )
 
 # apply cropcircles to create circular images representing MVCs --
@@ -424,7 +424,7 @@ patch_plt + plot_annotation(title = 'DEEP SPACE NINE',
                             subtitle = "STAR TREK: THE NEXT CONVERSATION",
                             caption = "BROUGHT TO YOU BY TRISTAN LOUTH-ROBINS. GITHUB: https://github.com/TristanLouthRobins",theme=theme_trek_header())  
 
-ggsave("exports/3panel.png", width = 12, height = 8, units = "cm") 
+ggsave("exports/3panel.png",width = 36, height = 24, units = "cm") 
 
 # generate plots of the MVC ranking trend ------------------------------------
 
@@ -521,7 +521,7 @@ MVC_votes_rank + plot_annotation(title = 'DEEP SPACE NINE',
                                  caption = "BROUGHT TO YOU BY TRISTAN LOUTH-ROBINS. GITHUB: https://github.com/TristanLouthRobins",theme=theme_trek_header())  
 
 
-ggsave("exports/ranks.png", width = 16, height = 8, units = "cm") 
+ggsave("exports/ranks.png", width = 48, height = 24, units = "cm") 
 
 # -------------------------------------------------
 # -------------------------------------------------
