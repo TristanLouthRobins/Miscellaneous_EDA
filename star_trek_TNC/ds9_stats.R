@@ -424,7 +424,7 @@ patch_plt + plot_annotation(title = 'DEEP SPACE NINE',
                             subtitle = "STAR TREK: THE NEXT CONVERSATION",
                             caption = "BROUGHT TO YOU BY TRISTAN LOUTH-ROBINS. GITHUB: https://github.com/TristanLouthRobins",theme=theme_trek_header())  
 
-ggsave("exports/3panel.png",width = 36, height = 24, units = "cm") 
+ggsave("exports/ds9_s1_3panel.png",width = 36, height = 24, units = "cm") 
 
 # generate plots of the MVC ranking trend ------------------------------------
 
@@ -521,7 +521,7 @@ MVC_votes_rank + plot_annotation(title = 'DEEP SPACE NINE',
                                  caption = "BROUGHT TO YOU BY TRISTAN LOUTH-ROBINS. GITHUB: https://github.com/TristanLouthRobins",theme=theme_trek_header())  
 
 
-ggsave("exports/ranks.png", width = 48, height = 24, units = "cm") 
+ggsave("exports/ds9_s1_ranks.png", width = 48, height = 24, units = "cm") 
 
 # -------------------------------------------------
 # -------------------------------------------------
@@ -599,4 +599,4 @@ complete_k_data %>%
         legend.key = element_rect(fill = "#000000", color = NA)) 
 
 
-ggsave("exports/ep_cluster_season1.png", width = 36, height = 24, units = "cm") 
+ggsave("exports/ds9_s1_ep_cluster.png", width = 36, height = 24, units = "cm") 
