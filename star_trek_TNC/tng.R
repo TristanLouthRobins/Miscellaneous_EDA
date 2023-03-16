@@ -306,4 +306,4 @@ complete_k_data %>%
         legend.key = element_rect(fill = "#000000", color = NA)) 
 
 
-ggsave("exports/tng_s0_cluster.png", width = 36, height = 24, units = "cm") 
+ggsave("exports/tng_s1_cluster.png", width = 36, height = 24, units = "cm") 

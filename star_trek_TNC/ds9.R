@@ -17,7 +17,7 @@ library(tidyverse)
 
 data <- read_csv("star_trek_TNC/data/tnc_stats.csv") %>% 
   filter(Series == "DS9") %>%
-  slice(1:19)
+  slice(1:20)
 
 # tidy data -------------------------------------------------------------
 # first season data tidy ------------------------------------------------
@@ -512,7 +512,7 @@ hlt_rank_plt <- function(selection){
 } 
 
 # MVC_plt
-MVC_ranks_plt <- hlt_rank_plt("O'BRIEN")
+MVC_ranks_plt <- hlt_rank_plt("ODO")
 
 MVC_votes_rank  <- MVC_plt | MVC_ranks_plt
 
@@ -521,7 +521,7 @@ MVC_votes_rank + plot_annotation(title = 'DEEP SPACE NINE',
                                  caption = "BROUGHT TO YOU BY TRISTAN LOUTH-ROBINS. GITHUB: https://github.com/TristanLouthRobins",theme=theme_trek_header())  
 
 
-ggsave("exports/ds9_s1_ranks.png", width = 48, height = 24, units = "cm") 
+ggsave("exports/ds9_s1_ranks_e19.png", width = 48, height = 24, units = "cm") 
 
 # -------------------------------------------------
 # -------------------------------------------------
