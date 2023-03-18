@@ -522,9 +522,6 @@ MVC_votes_rank + plot_annotation(title = 'DEEP SPACE NINE',
 
 ggsave("exports/ds9_s1_ranks_e19.png", width = 48, height = 24, units = "cm") 
 
-# -------------------------------------------------
-# -------------------------------------------------
-
 # Cluster analysis of episode rankings
 
 k_data <- data %>% slice(0:(current_ep_num-1)) %>%  select("Episode_name", "Matt_rating", "Andy_rating", "TNC", "IMDB")
@@ -543,7 +540,8 @@ scaled_k_data <- cbind(scaled_k_data, cluster)
 complete_k_data <- cbind(episodes, scaled_k_data, joint_avg) %>% 
   rename(joint = 7)
 
-stellar_palette <- c("#66CCFF", "#99FF66", "#FF9C00", "#9C9CFF")
+cluster_txtcol <- "#3786FF" 
+stellar_pal <- c("#CD6363", "#99FF66", "#FF9C00", "#9C9CFF")
 
 theme_trek_clust <- function(){
   theme(
@@ -570,11 +568,11 @@ theme_trek_clust <- function(){
 complete_k_data %>% 
   ggplot() +
   stat_density_2d(aes(x=TNC, y=IMDB), colour = "#46616E") +
-  annotate("text", x=1, y=1, size = 8, colour = "#FFCC33", label = "DABO!", fontface = 2, family = "Antonio") +
-  annotate("text", x=0, y=0, size = 8, colour = "#FFCC33", label = "NEUTRAL ZONE", fontface = 2, family = "Antonio") +
-  annotate("text", x=-1, y=-1, size = 8, colour = "#FFCC33", label = "BADLANDS", fontface = 2, family = "Antonio") +
-  annotate("text", x=-2, y=-2, size = 8, colour = "#FFCC33", label = "HELL", fontface = 2, family = "Antonio") +
-  geom_point(aes(x=TNC, y=IMDB, colour = factor(cluster), size = joint)) +
+  annotate("text", x=1, y=1, size = 8, colour = cluster_txtcol, label = "DABO!", fontface = 2, family = "Antonio") +
+  annotate("text", x=0, y=0, size = 8, colour = cluster_txtcol, label = "NEUTRAL ZONE", fontface = 2, family = "Antonio") +
+  annotate("text", x=-1, y=-1, size = 8, colour = cluster_txtcol, label = "BADLANDS", fontface = 2, family = "Antonio") +
+  annotate("text", x=-2, y=-2, size = 8, colour = cluster_txtcol, label = "HELL", fontface = 2, family = "Antonio") +
+  geom_point(aes(x=TNC, y=IMDB, colour = factor(cluster), size = joint), alpha = 0.7) +
   geom_label_repel(aes(x=TNC, y=IMDB, label=toupper(Episode_name)),
                    family = "Antonio",
                    colour = "#FFFF33",
@@ -587,7 +585,7 @@ complete_k_data %>%
                    segment.ncp = 3,
                    segment.angle = 20,
                    alpha = 0.7) +
-  scale_color_manual(values = stellar_palette) +
+  scale_color_manual(values = stellar_pal) +
   labs(title = "DEEP SPACE NINE",
        subtitle = "EPISODE GUIDE: SEASON 1 QUADRANT (K-MEANS CLUSTER MODEL)",
        caption = "BROUGHT TO YOU BY TRISTAN LOUTH-ROBINS. GITHUB: https://github.com/TristanLouthRobins",
@@ -600,17 +598,44 @@ complete_k_data %>%
 
 ggsave("exports/ds9_s1_ep_cluster_e18.png", width = 36, height = 24, units = "cm") 
 
-# -------------------------------------------------
 # - END OF SEASON SUMMARY STATISTIC BREAKDOWN -----
-# -------------------------------------------------
 
 # TEST AREA -- NOT COMPLETE -- 
 
 # Top 3 & bottom 3 episodes for all ratings 
-(top_TNC <- top3(1,TNC))
-(top_IMDB <- top3(1,IMDB))
-(top_Andy <- top3(1,Andy_rating))
-(top_Matt <- top3(1,Matt_rating))
+
+(top_TNC <- top3(1,TNC) %>% select(Episode_name, TNC) %>% 
+    mutate(rank = 1:3) %>% 
+    pivot_longer(cols = "TNC", names_to = "rating")) 
+(top_IMDB <- top3(1,IMDB) %>% select(Episode_name, IMDB) %>% 
+    mutate(rank = 1:3) %>% 
+    pivot_longer(cols = "IMDB", names_to = "rating"))
+(top_Andy <- top3(1,Andy_rating) %>% select(Episode_name, Andy_rating) %>% 
+    mutate(rank = 1:3) %>% 
+    rename("Andy" = "Andy_rating") %>% 
+    pivot_longer(cols = "Andy", names_to = "rating"))
+(top_Matt <- top3(1,Matt_rating) %>% select(Episode_name, Matt_rating) %>% 
+    mutate(rank = 1:3) %>% 
+    rename("Matt" = "Matt_rating") %>% 
+    pivot_longer(cols = "Matt", names_to = "rating"))
+
+top_all <- bind_rows(list(top_TNC, top_IMDB, top_Andy, top_Matt)) %>% 
+  mutate(rating = as_factor(rating))
+
+top_all$rating <- ordered(top_all$rating, levels = c("IMDB", "TNC", "Andy", "Matt")) 
+
+top_all %>% 
+  ggplot() +
+  geom_text(aes(x = fct_reorder(toupper(rating), value), 
+                y = rank, 
+                label = paste(toupper(Episode_name), " (", value, ")", sep = "")),  
+            size = 2, family = "Antonio", colour = "white") +
+  labs(subtitle = "TOP 3 RATED EPISODES",
+       x = "", y = "") +
+  scale_y_continuous(limits = c(1, 3), breaks = c(1,2,3)) +
+  theme_trek()
+
+ggsave("exports/top3-test.png", width = 12, height = 6, units = "cm")  
 
 (bot_TNC <- bot3(1,TNC) %>% select(Episode_name, TNC) %>% 
     mutate(rank = 3:1) %>% 
@@ -634,9 +659,14 @@ bot_all$rating <- ordered(bot_all$rating, levels = c("IMDB", "TNC", "Andy", "Mat
 
 bot_all %>% 
   ggplot() +
-  geom_text(aes(x = rating, y = rank, label = Episode_name), size = 3, family = "Antonio") +
-  labs(x = "", y = "") +
-  theme_minimal()
+  geom_text(aes(x = fct_reorder(toupper(rating), value), 
+                y = rank, 
+                label = paste(toupper(Episode_name), " (", value, ")", sep = "")),  
+            size = 2, family = "Antonio", colour = "white") +
+  labs(subtitle = "BOTTOM 3 RATED EPISODES",
+       x = "", y = "") +
+  scale_y_continuous(limits = c(1, 3), breaks = c(1,2,3)) +
+  theme_trek()
 
 ggsave("exports/bottom3-test.png", width = 12, height = 6, units = "cm")  
 

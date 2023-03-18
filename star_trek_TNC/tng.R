@@ -143,6 +143,9 @@ library(ggimage)
 library(lcars)
 library(glue)
 
+font_add("StarTrekTNGTitle", "/Users/tristanlouth-robins/Library/Fonts/Star Trek TNG-Title Regular.ttf")
+font_add("Antonio", "/Users/tristanlouth-robins/Library/Fonts/Antonio-VariableFont_wght.ttf")
+
 # define TNG viz themes --------------------------------------------
 theme_trek <- function(){
   theme(
@@ -261,7 +264,8 @@ scaled_k_data <- cbind(scaled_k_data, cluster)
 complete_k_data <- cbind(episodes, scaled_k_data, joint_avg) %>% 
   rename(joint = 7)
 
-stellar_palette <- c("#66CCFF", "#99FF66", "#FF9C00", "#9C9CFF")
+cluster_txtcol <- "#3786FF" 
+stellar_pal <- c("#CD6363", "#99FF66", "#FF9C00", "#9C9CFF")
 
 theme_trek_clust <- function(){
   theme(
@@ -285,18 +289,16 @@ theme_trek_clust <- function(){
   )
 }
 
-font_add("StarTrekTNGTitle", "/Users/tristanlouth-robins/Library/Fonts/Star Trek TNG-Title Regular.ttf")
-font_add("Antonio", "/Users/tristanlouth-robins/Library/Fonts/Antonio-VariableFont_wght.ttf")
-
 complete_k_data %>% 
   ggplot() +
   stat_density_2d(aes(x=TNC, y=IMDB), colour = "#46616E") +
-  annotate("text", x=1, y=1, size = 8, colour = "#FFCC33", label = "MAKE IT SO", fontface = 2) +
-  annotate("text", x=0, y=0, size = 8, colour = "#FFCC33", label = "NEUTRAL ZONE", fontface = 2) +
-  annotate("text", x=-1, y=-1, size = 8, colour = "#FFCC33", label = "BADLANDS", fontface = 2) +
-  annotate("text", x=-2, y=-2, size = 8, colour = "#FFCC33", label = "HELL", fontface = 2) +
-  geom_point(aes(x=TNC, y=IMDB, colour = factor(cluster), size = joint)) +
-  geom_label_repel(aes(x=TNC, y=IMDB, label=Episode_name),
+  annotate("text", x=1, y=1, size = 8, colour = cluster_txtcol, label = "DABO!", fontface = 2, family = "Antonio") +
+  annotate("text", x=0, y=0, size = 8, colour = cluster_txtcol, label = "NEUTRAL ZONE", fontface = 2, family = "Antonio") +
+  annotate("text", x=-1, y=-1, size = 8, colour = cluster_txtcol, label = "BADLANDS", fontface = 2, family = "Antonio") +
+  annotate("text", x=-2, y=-2, size = 8, colour = cluster_txtcol, label = "HELL", fontface = 2, family = "Antonio") +
+  geom_point(aes(x=TNC, y=IMDB, colour = factor(cluster), size = joint), alpha = 0.7) +
+  geom_label_repel(aes(x=TNC, y=IMDB, label=toupper(Episode_name)),
+                   family = "Antonio",
                    colour = "#FFFF33",
                    fill = "black",
                    max.overlaps = 7,
@@ -307,7 +309,7 @@ complete_k_data %>%
                    segment.ncp = 3,
                    segment.angle = 20,
                    alpha = 0.7) +
-  scale_color_manual(values = stellar_palette) +
+  scale_color_manual(values = stellar_pal) +
   labs(title = "THE NEXT GENERATION",
        subtitle = "EPISODE GUIDE: SEASON 2 QUADRANT (K-MEANS CLUSTER MODEL)",
        caption = "BROUGHT TO YOU BY TRISTAN LOUTH-ROBINS. GITHUB: https://github.com/TristanLouthRobins",
