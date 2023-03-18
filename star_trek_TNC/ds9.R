@@ -17,7 +17,7 @@ library(tidyverse)
 
 data <- read_csv("star_trek_TNC/data/tnc_stats.csv") %>% 
   filter(Series == "DS9") %>%
-  slice(1:20)
+  slice(1:19)
 
 # tidy data -------------------------------------------------------------
 # first season data tidy ------------------------------------------------
@@ -165,14 +165,9 @@ bot3 <- function(season, who){
     slice(0:eps_watched) %>% 
     filter(Season == season) %>% 
     arrange({{who}}) %>% 
-    head(n=3)
+    head(n=3) %>% 
+    arrange(desc({{who}}))
 }
-
-(top_TNC <- top3(1,TNC))
-(top_IMDB <- top3(1,IMDB))
-
-(bot_TNC <- bot3(1,TNC))
-(bot_IMDB <- bot3(1,IMDB))
 
 # Summarise MVC by joint count of character division -------------------
 
@@ -209,8 +204,14 @@ pivot_MVC_by_race <-
 library(ggplot2)
 library(cropcircles) # Credit to: https://github.com/doehm for his excellent pkg!
 library(ggimage)
-library(lcars)
+library(ggrepel)
+library(ggbump)
+library(ggtext)
 library(glue)
+library(showtext)
+
+font_add("Federation", "/Users/tristanlouth-robins/Library/Fonts/DS9_Title.ttf")
+font_add("Antonio", "/Users/tristanlouth-robins/Library/Fonts/Antonio-VariableFont_wght.ttf")
 
 # create a vector of image 'headshots' of DS9 characters --------
 
@@ -311,7 +312,7 @@ MVC_plt <-
   ggplot(aes(x=count, y=fct_reorder(Character, count))) +
   geom_bar(stat = "identity", fill = "#9C9CFF") +
   geom_image(aes(x=count, y=fct_reorder(Character, count), image = img), size = 0.1) +
-  geom_text(aes(x=8.5, y=8, label = toupper(glue("+ 2 VOTES ({current_ep})")), family = "Antonio"), color = "#ED884C", size = 4) +
+  geom_text(aes(x=8.5, y=7, label = toupper(glue("+ 2 VOTES ({current_ep})")), family = "Antonio"), color = "#ED884C", size = 4) +
   labs(
     subtitle = sub_title,
     x = element_blank(),
@@ -428,8 +429,6 @@ ggsave("exports/ds9_s1_3panel.png",width = 36, height = 24, units = "cm")
 
 # generate plots of the MVC ranking trend ------------------------------------
 
-library(ggbump)
-
 tally <- 
   data %>% 
   slice(0:eps_watched) %>% 
@@ -527,7 +526,6 @@ ggsave("exports/ds9_s1_ranks_e19.png", width = 48, height = 24, units = "cm")
 # -------------------------------------------------
 
 # Cluster analysis of episode rankings
-library(ggrepel)
 
 k_data <- data %>% slice(0:(current_ep_num-1)) %>%  select("Episode_name", "Matt_rating", "Andy_rating", "TNC", "IMDB")
 episodes <- k_data[,1]
@@ -572,12 +570,13 @@ theme_trek_clust <- function(){
 complete_k_data %>% 
   ggplot() +
   stat_density_2d(aes(x=TNC, y=IMDB), colour = "#46616E") +
-  annotate("text", x=1, y=1, size = 8, colour = "#FFCC33", label = "DABO!", fontface = 2) +
-  annotate("text", x=0, y=0, size = 8, colour = "#FFCC33", label = "NEUTRAL ZONE", fontface = 2) +
-  annotate("text", x=-1, y=-1, size = 8, colour = "#FFCC33", label = "BADLANDS", fontface = 2) +
-  annotate("text", x=-2, y=-2, size = 8, colour = "#FFCC33", label = "HELL", fontface = 2) +
+  annotate("text", x=1, y=1, size = 8, colour = "#FFCC33", label = "DABO!", fontface = 2, family = "Antonio") +
+  annotate("text", x=0, y=0, size = 8, colour = "#FFCC33", label = "NEUTRAL ZONE", fontface = 2, family = "Antonio") +
+  annotate("text", x=-1, y=-1, size = 8, colour = "#FFCC33", label = "BADLANDS", fontface = 2, family = "Antonio") +
+  annotate("text", x=-2, y=-2, size = 8, colour = "#FFCC33", label = "HELL", fontface = 2, family = "Antonio") +
   geom_point(aes(x=TNC, y=IMDB, colour = factor(cluster), size = joint)) +
-  geom_label_repel(aes(x=TNC, y=IMDB, label=Episode_name),
+  geom_label_repel(aes(x=TNC, y=IMDB, label=toupper(Episode_name)),
+                   family = "Antonio",
                    colour = "#FFFF33",
                    fill = "black",
                    max.overlaps = 7,
@@ -599,4 +598,47 @@ complete_k_data %>%
         legend.key = element_rect(fill = "#000000", color = NA)) 
 
 
-ggsave("exports/ds9_s1_ep_cluster.png", width = 36, height = 24, units = "cm") 
+ggsave("exports/ds9_s1_ep_cluster_e18.png", width = 36, height = 24, units = "cm") 
+
+# -------------------------------------------------
+# - END OF SEASON SUMMARY STATISTIC BREAKDOWN -----
+# -------------------------------------------------
+
+# TEST AREA -- NOT COMPLETE -- 
+
+# Top 3 & bottom 3 episodes for all ratings 
+(top_TNC <- top3(1,TNC))
+(top_IMDB <- top3(1,IMDB))
+(top_Andy <- top3(1,Andy_rating))
+(top_Matt <- top3(1,Matt_rating))
+
+(bot_TNC <- bot3(1,TNC) %>% select(Episode_name, TNC) %>% 
+    mutate(rank = 3:1) %>% 
+    pivot_longer(cols = "TNC", names_to = "rating")) 
+(bot_IMDB <- bot3(1,IMDB) %>% select(Episode_name, IMDB) %>% 
+    mutate(rank = 3:1) %>% 
+    pivot_longer(cols = "IMDB", names_to = "rating"))
+(bot_Andy <- bot3(1,Andy_rating) %>% select(Episode_name, Andy_rating) %>% 
+    mutate(rank = 3:1) %>% 
+    rename("Andy" = "Andy_rating") %>% 
+    pivot_longer(cols = "Andy", names_to = "rating"))
+(bot_Matt <- bot3(1,Matt_rating) %>% select(Episode_name, Matt_rating) %>% 
+    mutate(rank = 3:1) %>% 
+    rename("Matt" = "Matt_rating") %>% 
+    pivot_longer(cols = "Matt", names_to = "rating"))
+
+bot_all <- bind_rows(list(bot_TNC, bot_IMDB, bot_Andy, bot_Matt)) %>% 
+  mutate(rating = as_factor(rating))
+
+bot_all$rating <- ordered(bot_all$rating, levels = c("IMDB", "TNC", "Andy", "Matt")) 
+
+bot_all %>% 
+  ggplot() +
+  geom_text(aes(x = rating, y = rank, label = Episode_name), size = 3, family = "Antonio") +
+  labs(x = "", y = "") +
+  theme_minimal()
+
+ggsave("exports/bottom3-test.png", width = 12, height = 6, units = "cm")  
+
+
+

@@ -14,10 +14,16 @@
 
 # load Tidyverse for data tidying and import current dataset ------------
 library(tidyverse)
+library(ggplot2)
+library(cropcircles) # Credit to: https://github.com/doehm for his excellent pkg!
+library(ggimage)
+library(ggrepel)
+library(ggbump)
+library(glue)
+library(showtext)
 
 data <- read_csv("star_trek_TNC/data/tnc_stats.csv") %>% 
-  filter(Series == "TNG") %>% 
-  slice(1:30)
+  filter(Series == "TNG") 
 
 view(data)
 
@@ -234,9 +240,12 @@ joint_vs_imdb_rating_plt <-
 # -------------------------------------------------
 
 # Cluster analysis of episode rankings
-library(ggrepel)
 
-k_data <- data %>% slice(0:(current_ep_num-1)) %>%  select("Episode_name", "Matt_rating", "Andy_rating", "TNC", "IMDB")
+k_data <- data %>% 
+  filter(Season == 2,
+         TNC != 0) %>%  
+  select("Episode_name", "Matt_rating", "Andy_rating", "TNC", "IMDB")
+
 episodes <- k_data[,1]
 tnc_score <- k_data[,4] # Here, we're grabbing the TNC score as an un-scaled variable
 imdb_score <- k_data[,5] # As above, but with IMDB
@@ -276,6 +285,9 @@ theme_trek_clust <- function(){
   )
 }
 
+font_add("StarTrekTNGTitle", "/Users/tristanlouth-robins/Library/Fonts/Star Trek TNG-Title Regular.ttf")
+font_add("Antonio", "/Users/tristanlouth-robins/Library/Fonts/Antonio-VariableFont_wght.ttf")
+
 complete_k_data %>% 
   ggplot() +
   stat_density_2d(aes(x=TNC, y=IMDB), colour = "#46616E") +
@@ -297,7 +309,7 @@ complete_k_data %>%
                    alpha = 0.7) +
   scale_color_manual(values = stellar_palette) +
   labs(title = "THE NEXT GENERATION",
-       subtitle = "EPISODE GUIDE: SEASON 1 QUADRANT (K-MEANS CLUSTER MODEL)",
+       subtitle = "EPISODE GUIDE: SEASON 2 QUADRANT (K-MEANS CLUSTER MODEL)",
        caption = "BROUGHT TO YOU BY TRISTAN LOUTH-ROBINS. GITHUB: https://github.com/TristanLouthRobins",
        x = "", y = "") +
   theme_trek_clust() +
@@ -306,4 +318,4 @@ complete_k_data %>%
         legend.key = element_rect(fill = "#000000", color = NA)) 
 
 
-ggsave("exports/tng_s1_cluster.png", width = 36, height = 24, units = "cm") 
+ggsave("exports/tng_s2_cluster.png", width = 36, height = 24, units = "cm") 

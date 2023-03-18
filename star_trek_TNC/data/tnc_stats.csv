@@ -208,8 +208,8 @@ Unnatural Selection ,7,2,TNG,4,,3,No,O'Brien,O'Brien,3.5,6.5,,,,,,,,,11
 A Matter of Honor,8,2,TNG,9,,7,Yes,Worf,Riker,8,8,,,,,,,,,11.3
 Measure of a Man,9,2,TNG,8,,8,Yes,Picard,Picard,8,9.1,,,,,,,,,11.3
 The Dauphin,10,2,TNG,3,,3,Neutral,Ensign Gibson,Ensign Gibson,3,6.2,,,,,,,,,10.7
-Contagion,11,2,TNG,,,,,,,0,7.6,,,,,,,,,10.2
-The Royale,12,2,TNG,,,,,,,0,6.6,,,,,,,,,10.6
+Contagion,11,2,TNG,8,,6,Yes,La Forge,La Forge,7,7.6,,,,,,,,,10.2
+The Royale,12,2,TNG,2,,2,Yes,Data,Data,2,6.6,,,,,,,,,10.6
 Time Squared,13,2,TNG,,,,,,,0,7.5,,,,,,,,,9.9
 The Icarus Factor,14,2,TNG,,,,,,,0,6.2,,,,,,,,,9.1
 Pen Pals,15,2,TNG,,,,,,,0,6.8,,,,,,,,,9.7
@@ -220,3 +220,7 @@ Manhunt,19,2,TNG,,,,,,,0,6.1,,,,,,,,,8.9
 The Emissary,20,2,TNG,,,,,,,0,7.5,,,,,,,,,9
 Peak Performance,21,2,TNG,,,,,,,0,7.7,,,,,,,,,9.4
 Shades of Gray,22,2,TNG,,,,,,,0,3.3,,,,,,,,,9.8
+,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,
+Broken Bow,1,1,ENT,8,,7,,T'Pol,Archer,,,,,,,,,,,
