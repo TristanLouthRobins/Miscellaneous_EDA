@@ -520,7 +520,7 @@ MVC_votes_rank + plot_annotation(title = 'DEEP SPACE NINE',
                                  caption = "BROUGHT TO YOU BY TRISTAN LOUTH-ROBINS. GITHUB: https://github.com/TristanLouthRobins",theme=theme_trek_header())  
 
 
-ggsave("exports/ds9_s1_ranks_e19.png", width = 48, height = 24, units = "cm") 
+ggsave("exports/ds9_s1_ranks_e18.png", width = 48, height = 24, units = "cm") 
 
 # Cluster analysis of episode rankings
 
@@ -568,7 +568,7 @@ theme_trek_clust <- function(){
 complete_k_data %>% 
   ggplot() +
   stat_density_2d(aes(x=TNC, y=IMDB), colour = "#46616E") +
-  annotate("text", x=1, y=1, size = 8, colour = cluster_txtcol, label = "DABO!", fontface = 2, family = "Antonio") +
+  annotate("text", x=1, y=1, size = 8, colour = cluster_txtcol, label = "DABO", fontface = 2, family = "Antonio") +
   annotate("text", x=0, y=0, size = 8, colour = cluster_txtcol, label = "NEUTRAL ZONE", fontface = 2, family = "Antonio") +
   annotate("text", x=-1, y=-1, size = 8, colour = cluster_txtcol, label = "BADLANDS", fontface = 2, family = "Antonio") +
   annotate("text", x=-2, y=-2, size = 8, colour = cluster_txtcol, label = "HELL", fontface = 2, family = "Antonio") +

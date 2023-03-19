@@ -143,7 +143,7 @@ library(ggimage)
 library(lcars)
 library(glue)
 
-font_add("StarTrekTNGTitle", "/Users/tristanlouth-robins/Library/Fonts/Star Trek TNG-Title Regular.ttf")
+font_add("Star Trek TNG-Title", "/Users/tristanlouth-robins/Library/Fonts/Star Trek TNG-Title Regular.ttf")
 font_add("Antonio", "/Users/tristanlouth-robins/Library/Fonts/Antonio-VariableFont_wght.ttf")
 
 # define TNG viz themes --------------------------------------------
@@ -152,7 +152,7 @@ theme_trek <- function(){
     text = element_text(family = "Antonio", colour = "#FFFFFF"),
     plot.margin = margin(5,2,5,2, "mm"),
     plot.background = element_rect(fill = "#000000", colour = "#99CCFF"),
-    plot.title = element_text(family = "Star Trek TNG-Title", size = 20, colour = "#F7B05A", vjust = 0),
+    plot.title = element_text(family = "StarTrekTNGTitle", size = 20, colour = "#F7B05A", vjust = 0),
     plot.subtitle = element_text(family = "Antonio", face = "bold", size = 14, colour = "#99CCFF"),
     axis.title.x = element_text(family = "Antonio", face = "bold", size = 12),
     axis.title.y = element_text(family = "Antonio", face = "bold", size = 12),
@@ -176,7 +176,7 @@ theme_trek_header <- function(){
     text = element_text(family = "Antonio", colour = "#FFFFFF"),
     plot.margin = margin(5,2,5,2, "mm"),
     plot.background = element_rect(fill = "#000000", colour = "000000"),
-    plot.title = element_text(family = "Star Trek TNG-Title", size = 24, colour = "#F7B05A", vjust = 0),
+    plot.title = element_text(family = "StarTrekTNGTitle", size = 24, colour = "#F7B05A", vjust = 0),
     plot.subtitle = element_text(family = "Antonio", face = "bold", size = 18, colour = "#99CCFF"),
     axis.title.x = element_text(family = "Antonio", face = "bold", size = 12),
     axis.title.y = element_text(family = "Antonio", face = "bold", size = 12),
@@ -245,7 +245,7 @@ joint_vs_imdb_rating_plt <-
 # Cluster analysis of episode rankings
 
 k_data <- data %>% 
-  filter(Season == 2,
+  filter(Season == 1,
          TNC != 0) %>%  
   select("Episode_name", "Matt_rating", "Andy_rating", "TNC", "IMDB")
 
@@ -272,7 +272,7 @@ theme_trek_clust <- function(){
     text = element_text(family = "Antonio", colour = "#FFFFFF"),
     plot.margin = margin(5,2,5,2, "mm"),
     plot.background = element_rect(fill = "#000000", colour = "#99CCFF"),
-    plot.title = element_text(family = "StarTrekTNGTitle", size = 28, colour = "#3399FF", vjust = 0),
+    plot.title = element_text(family = "Star Trek TNG-Title", size = 28, colour = "#3399FF", vjust = 0),
     plot.subtitle = element_text(family = "Antonio", face = "bold", size = 14, colour = "#99CCFF"),
     axis.title.x = element_text(family = "Antonio", face = "bold", size = 12),
     axis.title.y = element_text(family = "Antonio", face = "bold", size = 12),
@@ -292,7 +292,7 @@ theme_trek_clust <- function(){
 complete_k_data %>% 
   ggplot() +
   stat_density_2d(aes(x=TNC, y=IMDB), colour = "#46616E") +
-  annotate("text", x=1, y=1, size = 8, colour = cluster_txtcol, label = "DABO!", fontface = 2, family = "Antonio") +
+  annotate("text", x=1, y=1, size = 8, colour = cluster_txtcol, label = "MAKE IT SO", fontface = 2, family = "Antonio") +
   annotate("text", x=0, y=0, size = 8, colour = cluster_txtcol, label = "NEUTRAL ZONE", fontface = 2, family = "Antonio") +
   annotate("text", x=-1, y=-1, size = 8, colour = cluster_txtcol, label = "BADLANDS", fontface = 2, family = "Antonio") +
   annotate("text", x=-2, y=-2, size = 8, colour = cluster_txtcol, label = "HELL", fontface = 2, family = "Antonio") +
@@ -311,7 +311,7 @@ complete_k_data %>%
                    alpha = 0.7) +
   scale_color_manual(values = stellar_pal) +
   labs(title = "THE NEXT GENERATION",
-       subtitle = "EPISODE GUIDE: SEASON 2 QUADRANT (K-MEANS CLUSTER MODEL)",
+       subtitle = "EPISODE GUIDE: SEASON 1 QUADRANT (K-MEANS CLUSTER MODEL)",
        caption = "BROUGHT TO YOU BY TRISTAN LOUTH-ROBINS. GITHUB: https://github.com/TristanLouthRobins",
        x = "", y = "") +
   theme_trek_clust() +
@@ -320,4 +320,5 @@ complete_k_data %>%
         legend.key = element_rect(fill = "#000000", color = NA)) 
 
 
-ggsave("exports/tng_s2_cluster.png", width = 36, height = 24, units = "cm") 
+ggsave("exports/tng_s1_cluster.png", width = 36, height = 24, units = "cm") 
+
