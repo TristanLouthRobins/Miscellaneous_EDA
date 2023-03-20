@@ -3,7 +3,7 @@
 
 # This EDA script is for their episodes reviewing TNG -----
 
-# Latest update: v1.0.0 (9th March 2023) -------------------
+# Latest update: v1.1.0 (20th March 2023) -------------------
 
 # Variable key:
 # Andy_rating/Matt_rating: rating out of 10 'Andys' for each episode.
@@ -220,7 +220,7 @@ host_rating_plt <-
 
 joint_vs_imdb_rating_plt <- 
   joint_rating_data %>% 
-  filter(Season == 1) %>% 
+  filter(Season == 2) %>% 
   mutate(Episode_name = toupper(Episode_name)) %>% 
   ggplot(aes(x=Rating, y=fct_reorder(Episode_name, Episode_number), fill = Joint)) +
   geom_bar(stat = "identity", position = "dodge") +
@@ -245,7 +245,7 @@ joint_vs_imdb_rating_plt <-
 # Cluster analysis of episode rankings
 
 k_data <- data %>% 
-  filter(Season == 1,
+  filter(Season == 2,
          TNC != 0) %>%  
   select("Episode_name", "Matt_rating", "Andy_rating", "TNC", "IMDB")
 
@@ -311,14 +311,16 @@ complete_k_data %>%
                    alpha = 0.7) +
   scale_color_manual(values = stellar_pal) +
   labs(title = "THE NEXT GENERATION",
-       subtitle = "EPISODE GUIDE: SEASON 1 QUADRANT (K-MEANS CLUSTER MODEL)",
+       subtitle = "EPISODE GUIDE: SEASON 2 QUADRANT (K-MEANS CLUSTER MODEL)",
        caption = "BROUGHT TO YOU BY TRISTAN LOUTH-ROBINS. GITHUB: https://github.com/TristanLouthRobins",
        x = "", y = "") +
+  xlim(-3,3) +
+  ylim(-3,3) +
   theme_trek_clust() +
   theme(legend.title = element_blank(),
         legend.position = "none",
         legend.key = element_rect(fill = "#000000", color = NA)) 
 
 
-ggsave("exports/tng_s1_cluster.png", width = 36, height = 24, units = "cm") 
+ggsave("exports/tng_s2_cluster.png", width = 36, height = 24, units = "cm") 
 

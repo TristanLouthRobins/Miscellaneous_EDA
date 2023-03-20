@@ -210,17 +210,19 @@ Measure of a Man,9,2,TNG,8,,8,Yes,Picard,Picard,8,9.1,,,,,,,,,11.3
 The Dauphin,10,2,TNG,3,,3,Neutral,Ensign Gibson,Ensign Gibson,3,6.2,,,,,,,,,10.7
 Contagion,11,2,TNG,8,,6,Yes,La Forge,La Forge,7,7.6,,,,,,,,,10.2
 The Royale,12,2,TNG,2,,2,Yes,Data,Data,2,6.6,,,,,,,,,10.6
-Time Squared,13,2,TNG,,,,,,,0,7.5,,,,,,,,,9.9
-The Icarus Factor,14,2,TNG,,,,,,,0,6.2,,,,,,,,,9.1
-Pen Pals,15,2,TNG,,,,,,,0,6.8,,,,,,,,,9.7
-Q Who,16,2,TNG,,,,,,,0,8.9,,,,,,,,,10.3
-Samaritan Snare,17,2,TNG,,,,,,,0,6.5,,,,,,,,,10
-Up the Long Ladder,18,2,TNG,,,,,,,0,6.2,,,,,,,,,9.2
-Manhunt,19,2,TNG,,,,,,,0,6.1,,,,,,,,,8.9
-The Emissary,20,2,TNG,,,,,,,0,7.5,,,,,,,,,9
-Peak Performance,21,2,TNG,,,,,,,0,7.7,,,,,,,,,9.4
-Shades of Gray,22,2,TNG,,,,,,,0,3.3,,,,,,,,,9.8
+Time Squared,13,2,TNG,1.5,,1.5,No,Picard,Picard,1.5,7.5,,,,,,,,,9.9
+The Icarus Factor,14,2,TNG,2.5,,2,No,Troi,W.Crusher,2.25,6.2,,,,,,,,,9.1
+Pen Pals,15,2,TNG,3.5,,1.5,No,W.Crusher,W.Crusher,2.5,6.8,,,,,,,,,9.7
+Q Who,16,2,TNG,9,,8,Yes,Nobody,Nobody,8.5,8.9,,,,,,,,,10.3
+Samaritan Snare,17,2,TNG,3,,3.5,No,Pulaski,Pulaski,3.25,6.5,,,,,,,,,10
+Up the Long Ladder,18,2,TNG,0.5,,1,No,Pulaski,Pulaski,0.75,6.2,,,,,,,,,9.2
+Manhunt,19,2,TNG,0.5,,1,No,Data,Data,0.75,6.1,,,,,,,,,8.9
+The Emissary,20,2,TNG,7.5,,7,Yes,Worf,Worf,7.25,7.5,,,,,,,,,9
+Peak Performance,21,2,TNG,6.5,,6,Neutral,Worf,Worf,6.25,7.7,,,,,,,,,9.4
+Shades of Gray,22,2,TNG,0.01,,0.01,No,Pulaski,Pulaski,0.01,3.3,,,,,,,,,9.8
 ,,,,,,,,,,,,,,,,,,,,
 ,,,,,,,,,,,,,,,,,,,,
 ,,,,,,,,,,,,,,,,,,,,
-Broken Bow,1,1,ENT,8,,7,,T'Pol,Archer,,,,,,,,,,,
+Broken Bow,1,1,ENT,8,,7,Yes,T'Pol,Archer,,,,,,,,,,,
+Fight or Flight,2,1,ENT,7,,7,Yes,Hoshi,Hoshi,,,,,,,,,,,
+Strange New World,,,,,,,Neutral,,,,,,,,,,,,,
