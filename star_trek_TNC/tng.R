@@ -245,7 +245,7 @@ joint_vs_imdb_rating_plt <-
 # Cluster analysis of episode rankings
 
 k_data <- data %>% 
-  filter(Season == 2,
+  filter(Season == 1,
          TNC != 0) %>%  
   select("Episode_name", "Matt_rating", "Andy_rating", "TNC", "IMDB")
 
@@ -311,7 +311,7 @@ complete_k_data %>%
                    alpha = 0.7) +
   scale_color_manual(values = stellar_pal) +
   labs(title = "THE NEXT GENERATION",
-       subtitle = "EPISODE GUIDE: SEASON 2 QUADRANT (K-MEANS CLUSTER MODEL)",
+       subtitle = "EPISODE GUIDE: SEASON 1 QUADRANT (K-MEANS CLUSTER MODEL)",
        caption = "BROUGHT TO YOU BY TRISTAN LOUTH-ROBINS. GITHUB: https://github.com/TristanLouthRobins",
        x = "", y = "") +
   xlim(-3,3) +
