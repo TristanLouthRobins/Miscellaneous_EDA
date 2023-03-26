@@ -3,7 +3,7 @@
 
 # This EDA script is for their episodes reviewing DS9 -----
 
-# Latest update: v1.2.2 (15th March 2023) -------------------
+# Latest update: v1.2.3 (26th March 2023) -------------------
 
 # Variable key:
 # Andy_rating/Matt_rating: rating out of 10 'Andys' for each episode.
@@ -150,24 +150,6 @@ data <-
              sd = sd(Value),
              median = median(Value)) %>% 
    arrange(desc(mean)))
-
-# top 3, bottom 3 eps within given season
-top3 <- function(season, who){
-  data %>% 
-    slice(0:eps_watched) %>% 
-    filter(Season == season) %>% 
-    arrange(desc({{who}})) %>% 
-    head(n=3)
-}
-
-bot3 <- function(season, who){
-  data %>% 
-    slice(0:eps_watched) %>% 
-    filter(Season == season) %>% 
-    arrange({{who}}) %>% 
-    head(n=3) %>% 
-    arrange(desc({{who}}))
-}
 
 # Summarise MVC by joint count of character division -------------------
 
@@ -598,38 +580,70 @@ complete_k_data %>%
 
 ggsave("exports/ds9_s1_ep_cluster_e18.png", width = 36, height = 24, units = "cm") 
 
-# - END OF SEASON SUMMARY STATISTIC BREAKDOWN -----
+# - END OF SEASON SUMMARY STATISTIC BREAKDOWN -------------------------------------
 
 # TEST AREA -- NOT COMPLETE -- 
 
-# Top 3 & bottom 3 episodes for all ratings 
+# Top 3 & bottom 3 episodes for all ratings
+# top 3, bottom 3 eps within given season
+top3 <- function(season, who, who_str){
+  data %>% 
+    slice(0:eps_watched) %>% 
+    filter(Season == season) %>% 
+    arrange(desc({{who}})) %>% 
+    head(n=3) %>% 
+    select(Episode_name, {{who}}) %>% 
+    mutate(rank = 1:3) %>% 
+    pivot_longer(cols = who_str, names_to = "rating")
+}
 
-(top_TNC <- top3(1,TNC) %>% select(Episode_name, TNC) %>% 
-    mutate(rank = 1:3) %>% 
-    pivot_longer(cols = "TNC", names_to = "rating")) 
-(top_IMDB <- top3(1,IMDB) %>% select(Episode_name, IMDB) %>% 
-    mutate(rank = 1:3) %>% 
-    pivot_longer(cols = "IMDB", names_to = "rating"))
-(top_Andy <- top3(1,Andy_rating) %>% select(Episode_name, Andy_rating) %>% 
-    mutate(rank = 1:3) %>% 
-    rename("Andy" = "Andy_rating") %>% 
-    pivot_longer(cols = "Andy", names_to = "rating"))
-(top_Matt <- top3(1,Matt_rating) %>% select(Episode_name, Matt_rating) %>% 
-    mutate(rank = 1:3) %>% 
-    rename("Matt" = "Matt_rating") %>% 
-    pivot_longer(cols = "Matt", names_to = "rating"))
+bot3 <- function(season, who, who_str){
+  data %>% 
+    slice(0:eps_watched) %>% 
+    filter(Season == season) %>% 
+    arrange({{who}}) %>% 
+    head(n=3) %>% 
+    arrange(desc({{who}})) %>% 
+    select(Episode_name, {{who}}) %>% 
+    mutate(rank = 3:1) %>% 
+    pivot_longer(cols = who_str, names_to = "rating")
+}
+
+# rename Andy/Matt variables --
+data <- data %>% rename("Andy" = Andy_rating,
+                        "Matt" = Matt_rating) 
+
+# Top summaries -- 
+top_TNC <- top3(1,TNC,"TNC")
+top_IMDB <- top3(1,IMDB,"IMDB")
+top_Andy <- top3(1,Andy,"Andy")
+top_Matt <- top3(1,Matt,"Matt") 
 
 top_all <- bind_rows(list(top_TNC, top_IMDB, top_Andy, top_Matt)) %>% 
   mutate(rating = as_factor(rating))
 
 top_all$rating <- ordered(top_all$rating, levels = c("IMDB", "TNC", "Andy", "Matt")) 
 
+# Bot summaries -- 
+
+bot_TNC <- bot3(1,TNC,"TNC")
+bot_IMDB <- bot3(1,IMDB,"IMDB")
+bot_Andy <- bot3(1,Andy,"Andy")
+bot_Matt <- bot3(1,Matt,"Matt") 
+
+bot_all <- bind_rows(list(bot_TNC, bot_IMDB, bot_Andy, bot_Matt)) %>% 
+  mutate(rating = as_factor(rating))
+
+bot_all$rating <- ordered(bot_all$rating, levels = c("IMDB", "TNC", "Andy", "Matt")) 
+
+# Create the visualisations --
+
 top_all %>% 
   ggplot() +
   geom_text(aes(x = fct_reorder(toupper(rating), value), 
                 y = rank, 
                 label = paste(toupper(Episode_name), " (", value, ")", sep = "")),  
-            size = 2, family = "Antonio", colour = "white") +
+            size = 2, family = "Antonio", colour = "#FFFFFF") +
   labs(subtitle = "TOP 3 RATED EPISODES",
        x = "", y = "") +
   scale_y_continuous(limits = c(1, 3), breaks = c(1,2,3)) +
@@ -637,32 +651,12 @@ top_all %>%
 
 ggsave("exports/top3-test.png", width = 12, height = 6, units = "cm")  
 
-(bot_TNC <- bot3(1,TNC) %>% select(Episode_name, TNC) %>% 
-    mutate(rank = 3:1) %>% 
-    pivot_longer(cols = "TNC", names_to = "rating")) 
-(bot_IMDB <- bot3(1,IMDB) %>% select(Episode_name, IMDB) %>% 
-    mutate(rank = 3:1) %>% 
-    pivot_longer(cols = "IMDB", names_to = "rating"))
-(bot_Andy <- bot3(1,Andy_rating) %>% select(Episode_name, Andy_rating) %>% 
-    mutate(rank = 3:1) %>% 
-    rename("Andy" = "Andy_rating") %>% 
-    pivot_longer(cols = "Andy", names_to = "rating"))
-(bot_Matt <- bot3(1,Matt_rating) %>% select(Episode_name, Matt_rating) %>% 
-    mutate(rank = 3:1) %>% 
-    rename("Matt" = "Matt_rating") %>% 
-    pivot_longer(cols = "Matt", names_to = "rating"))
-
-bot_all <- bind_rows(list(bot_TNC, bot_IMDB, bot_Andy, bot_Matt)) %>% 
-  mutate(rating = as_factor(rating))
-
-bot_all$rating <- ordered(bot_all$rating, levels = c("IMDB", "TNC", "Andy", "Matt")) 
-
 bot_all %>% 
   ggplot() +
   geom_text(aes(x = fct_reorder(toupper(rating), value), 
                 y = rank, 
                 label = paste(toupper(Episode_name), " (", value, ")", sep = "")),  
-            size = 2, family = "Antonio", colour = "white") +
+            size = 2, family = "Antonio", colour = "#FFFFFF") +
   labs(subtitle = "BOTTOM 3 RATED EPISODES",
        x = "", y = "") +
   scale_y_continuous(limits = c(1, 3), breaks = c(1,2,3)) +
