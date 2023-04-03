@@ -3,7 +3,7 @@
 
 # This EDA script is for their episodes reviewing DS9 -----
 
-# Latest update: v1.2.3 (26th March 2023) -------------------
+# Latest update: v1.2.20 (3rd April 2023) -------------------
 
 # Variable key:
 # Andy_rating/Matt_rating: rating out of 10 'Andys' for each episode.
@@ -294,7 +294,8 @@ MVC_plt <-
   ggplot(aes(x=count, y=fct_reorder(Character, count))) +
   geom_bar(stat = "identity", fill = "#9C9CFF") +
   geom_image(aes(x=count, y=fct_reorder(Character, count), image = img), size = 0.1) +
-  geom_text(aes(x=8.5, y=7, label = toupper(glue("+ 2 VOTES ({current_ep})")), family = "Antonio"), color = "#ED884C", size = 4) +
+  geom_text(aes(x=2, y=9, label = toupper(glue("+ 1 VOTE ({current_ep})")), family = "Antonio"), color = "#FFFF9C", size = 4) +
+  geom_text(aes(x=2, y=7, label = toupper(glue("+ 1 VOTE ({current_ep})")), family = "Antonio"), color = "#FFFF9C", size = 4) +
   labs(
     subtitle = sub_title,
     x = element_blank(),
@@ -329,13 +330,12 @@ host_rating_plt <-
 joint_rating_plt_desc <- 
   data %>% 
   mutate(Episode_name = toupper(Episode_name)) %>% 
-  ggplot(aes(x=TNC, y=fct_reorder(Episode_name, TNC), fill = as.factor(TNC))) +
+  ggplot(aes(x=TNC, y=fct_reorder(Episode_name, TNC)), fill = "#FFFF9C") +
   geom_bar(stat = "identity", position = "dodge") +
   labs(
     subtitle = "SEASON ONE: EPISODE RATINGS - JOINT",
     x = element_blank(),
     y = element_blank()) +
-  scale_x_continuous(limits = c(0, 10), breaks = c(0,1,2,3,4,5,6,7,8,9,10)) +
   scale_fill_brewer(palette = "Spectral") +
   theme_trek() +
   theme(axis.text.x = element_text(angle = 90, vjust = 1, hjust =1),
@@ -372,7 +372,7 @@ joint_vs_imdb_rating_plt <-
 joint_rating_plt_seq <- 
   data %>% 
   mutate(Episode_name = toupper(Episode_name)) %>% 
-  ggplot(aes(x=TNC, y=fct_reorder(Episode_name, Episode_number), fill = as.factor(TNC))) +
+  ggplot(aes(x=TNC, y=fct_reorder(Episode_name, Episode_number)), fill = "#FFFF9C") +
   geom_bar(stat = "identity", position = "dodge") +
   labs(
     subtitle = "SEASON ONE: EPISODE RATINGS - JOINT",
@@ -502,7 +502,7 @@ MVC_votes_rank + plot_annotation(title = 'DEEP SPACE NINE',
                                  caption = "BROUGHT TO YOU BY TRISTAN LOUTH-ROBINS. GITHUB: https://github.com/TristanLouthRobins",theme=theme_trek_header())  
 
 
-ggsave("exports/ds9_s1_ranks_e18.png", width = 48, height = 24, units = "cm") 
+ggsave("exports/ds9_s1_ranks_e19.png", width = 48, height = 24, units = "cm") 
 
 # Cluster analysis of episode rankings
 
@@ -578,7 +578,7 @@ complete_k_data %>%
         legend.key = element_rect(fill = "#000000", color = NA)) 
 
 
-ggsave("exports/ds9_s1_ep_cluster_e18.png", width = 36, height = 24, units = "cm") 
+ggsave("exports/ds9_s1_ep_cluster_e19.png", width = 36, height = 24, units = "cm") 
 
 # - END OF SEASON SUMMARY STATISTIC BREAKDOWN -------------------------------------
 
