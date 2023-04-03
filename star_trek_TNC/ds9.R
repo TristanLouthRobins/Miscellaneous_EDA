@@ -516,7 +516,6 @@ scaled_k_data <- scale(k_data)
 model <- kmeans(scaled_k_data, centers = 4)
 cluster <- model$cluster
 
-cluster <- factor(cluster, levels = c(3,4,2,1))
 
 scaled_k_data <- cbind(scaled_k_data, cluster)
 complete_k_data <- cbind(episodes, scaled_k_data, joint_avg) %>% 
@@ -550,6 +549,7 @@ theme_trek_clust <- function(){
 complete_k_data %>% 
   ggplot() +
   stat_density_2d(aes(x=TNC, y=IMDB), colour = "#46616E") +
+  annotate("text", x=2, y=2, size = 8, colour = cluster_txtcol, label = "LOBE JOB", fontface = 2, family = "Antonio") +
   annotate("text", x=1, y=1, size = 8, colour = cluster_txtcol, label = "DABO", fontface = 2, family = "Antonio") +
   annotate("text", x=0, y=0, size = 8, colour = cluster_txtcol, label = "NEUTRAL ZONE", fontface = 2, family = "Antonio") +
   annotate("text", x=-1, y=-1, size = 8, colour = cluster_txtcol, label = "BADLANDS", fontface = 2, family = "Antonio") +
@@ -664,5 +664,59 @@ bot_all %>%
 
 ggsave("exports/bottom3-test.png", width = 12, height = 6, units = "cm")  
 
+# DIRECTOR, WRITER, SCREENPLAY CREDITS ---------------------------------------------
+
+(directors <- 
+data %>% 
+  slice(0:eps_watched) %>%   
+  group_by(`Director 1`) %>% 
+  summarise(episodes = n(), 
+            overall_mean = mean((Andy + Matt + TNC + IMDB)/4)) %>% 
+  arrange(desc(overall_mean))) %>% 
+  ungroup() %>% 
+  ggplot() + 
+  geom_col(aes(x = overall_mean, y = fct_reorder(toupper(`Director 1`), overall_mean))) +
+  labs(x="", y="") +
+  theme_trek()
+
+(writers <- 
+    data %>% 
+    slice(0:eps_watched) %>%   
+    group_by(`Writer 1`) %>% 
+    summarise(episodes = n(), 
+              overall_mean = mean((Andy + Matt + TNC + IMDB)/4)) %>% 
+    arrange(desc(overall_mean))) %>% 
+  ungroup() %>% 
+  ggplot() + 
+  geom_col(aes(x = overall_mean, y = fct_reorder(toupper(`Writer 1`), overall_mean))) +
+  labs(x="", y="") +
+  theme_trek()
+
+# HOST, TNC and IMDB STATISTICS -------------------------------------------------------
+
+rating_stats <- 
+data %>% 
+  filter(Season == 1) %>% 
+  slice(0:eps_watched) %>%   
+  pivot_longer(cols = c(Andy, Matt, TNC, IMDB), names_to = "Rated_by", values_to = "Rating") %>% 
+  mutate(Rated_by = as.factor(Rated_by)) %>% 
+  select(Rated_by, Rating) 
+  
+ggplot(rating_stats) +
+  geom_boxplot(aes(x = Rating, y = factor(toupper(Rated_by), level = c("ANDY", "MATT", "TNC", "IMDB"))), colour = "#FFFF33", fill = "#000000") +
+  geom_jitter(aes(x = Rating, y = factor(toupper(Rated_by), level = c("ANDY", "MATT", "TNC", "IMDB"))), colour = "#FF9C00", shape = 1, alpha = 0.5, width = 0.1, height = 0.2) +
+  labs(x="", y="") +
+  theme_trek()
+
+# Do Matt and Andy agree with each other in terms of ratings?
+
+ggplot(data) +
+  geom_smooth(aes(x = Matt, y = Andy), se = FALSE) +
+  geom_point(aes(x = Matt, y = Andy), colour = "#FF9C00") +
+  geom_hline(yintercept = 7.2, colour = "white", alpha = 0.4) +
+  labs(x="Matt Mira", y="Secunda") +
+  xlim(0,10) +
+  ylim(0,10) +
+  theme_trek()
 
 
