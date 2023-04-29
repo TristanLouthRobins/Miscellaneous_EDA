@@ -5,13 +5,6 @@
 
 # Latest update: v1.2.20 (3rd April 2023) -------------------
 
-# Variable key:
-# Andy_rating/Matt_rating: rating out of 10 'Andys' for each episode.
-# Andy_MVC/Matt_MVC: Most Valuable Character vote for each episode.
-# Andy_Watch/Matt_Watch: Whether the host recommends viewings watch a given episode.
-# TNC: The averaged rating - i.e: (Andy + Matt) / 2
-# IMDB: IMDb rating as at 15th Feb 2023
-
 # load Tidyverse for data tidying and import current dataset ------------
 library(tidyverse)
 
@@ -20,7 +13,6 @@ data <- read_csv("star_trek_TNC/data/tnc_stats.csv") %>%
   slice(1:19)
 
 # tidy data -------------------------------------------------------------
-# first season data tidy ------------------------------------------------
 
 data <- 
   data %>% 
@@ -42,7 +34,6 @@ data <-
          Matt_Watch = factor(Matt_Watch))
 
 # Add new variables for character's Division (Command, Ops, Sciences, Civilian, Other) 
-
 var.cmd <- c("Sisko", "Worf", "Kira")
 var.ops <- c("O'Brien", "Odo", "Rom")
 var.sci <- c("Dax", "Bashir")
