@@ -3,9 +3,11 @@ A repo for miscellaneous Exploratory Data Analysis (warning: may contain traces 
 
 For example, here's some viz I generated from my dataset for the podcast, Star Trek - The Next Conversation.
 
+![tnc_ds9_s1_EVERYTHING](https://user-images.githubusercontent.com/62044678/236374329-cc86a827-657d-45ef-b62b-0242366b23fc.png)
+
 ## Trek DS9 k-means cluster analysis of TNC and IMDb ratings. 
 ### Season 1
-![ds9_s1_ep_cluster_e18](https://user-images.githubusercontent.com/62044678/226085903-c404358e-f2e5-4e64-a4bc-36651a1b6344.png)
+![ds9-final_s1_cluster png](https://user-images.githubusercontent.com/62044678/236374380-1092b3f6-c67a-4373-a646-8ee109358953.png)
 
 ## Trek TNG k-means cluster analysis of TNC and IMDb ratings. 
 ### Season 1
