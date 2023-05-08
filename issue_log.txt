@@ -1,0 +1,16 @@
+# bar plot for joint TNC rating vs IMDb ---------------------------------------- (line 293)
+Fix stat calculation, which is currently not matching up with the caption.
+
+Partial fix: 8/5/23
+
+consensus.2 <- data %>% 
+  select(TNC, IMDB) %>% 
+  mutate(diff = TNC - IMDB) %>% 
+  mutate(diff.cat =  ifelse(diff <= 0.1 & diff >= -0.1, "Match",
+                        ifelse(diff <= 0.5 & diff >= -0.5, "Close", 
+                           ifelse(diff > 0.5, "Disagree +", "Disagree -")))) %>%
+  mutate(who.scored.higher = ifelse(diff.cat == "Disagree +", "TNC",
+                                    ifelse(diff.cat == "Disagree -", "IMDB", "Consensus"))) %>% 
+  arrange(desc(diff)) %>% 
+  group_by(who.scored.higher) %>% 
+  summarise(count = n()) %>% 
