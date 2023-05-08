@@ -2,12 +2,12 @@
 # Hosted by Matt Mira and Andy Secunda -----------------------------------------
 # This EDA script is for their episodes reviewing DS9 --------------------------
 # Season 1 (19 episodes in total) ----------------------------------------------
-# Latest update: v1.2.22 (5 May 2023) ------------------------------------------
+# Latest update: v1.2.23 (8 May 2023) ------------------------------------------
 
 library(tidyverse)
 
 # import dataset ---------------------------------------------------------------
-data <- read_csv("star_trek_TNC/data/tnc_stats.csv") %>% 
+data <- read_csv("star_trek_TNC/data/tnc.csv") %>% 
   filter(Series == "DS9") %>%
   slice(1:19)
 
@@ -247,23 +247,34 @@ theme_trek_clust <- function(){
 
 # 1. plotting the episode scores -----------------------------------------------
 # bar plot for individual host rating data -------------------------------------
-consensus <- data %>% 
+compare.AndyMatt <- data %>% 
   select(Andy_rating, Matt_rating) %>% 
   mutate(diff = Andy_rating - Matt_rating) %>% 
-  mutate(diff.cat = ifelse(diff >= -0.5 & diff <= 0.5, "Agree", 
-                           ifelse(diff > 0.5, "Disagree +", "Disagree -"))) %>%
-  mutate(who.scored.higher = ifelse(diff.cat == "Disagree +", "Andy",
-                                    ifelse(diff.cat == "Disagree -", "Matt", "Consensus"))) %>% 
+  mutate(diff.type = ifelse(diff >= -0.5 & diff <= 0.5, "Close",
+                            ifelse(diff > 0.5, "Andy:Disagree +", "Matt:Disagree -"))) %>% 
   arrange(desc(diff)) %>% 
-  group_by(who.scored.higher) %>% 
+  group_by(diff.type) %>% 
   summarise(count = n()) %>% 
   na.omit() %>% 
   ungroup() %>% 
   mutate(prop = round(count/sum(count) * 100, 0))
 
-host_rating_caption <- str_wrap(glue("The hosts Season {data$Season[1]} scores matched or were very close on {consensus$count[2]} occassions, {consensus$prop[2]}% of the time and Andy consistently scored higher than 
-                                     Matt {consensus$count[1]} times ({consensus$prop[1]}%) compared to only {consensus$count[3]} instances when Matt scored higher than Andy. Their average scores
-                                     for this season were: {round(summary_stats$mean[2],1)} (Andy) and {round(summary_stats$mean[4],1)} (Matt)"), 100)
+scored.AndyMatt <- data %>% 
+  select(Andy_rating, Matt_rating) %>% 
+  mutate(diff = Andy_rating - Matt_rating) %>% 
+  mutate(whos.higher = ifelse(diff > 0, "Andy",
+                              ifelse(diff < 0, "Matt",
+                                     ifelse(diff == 0, "MATCH!", "???")))) %>% 
+  arrange(desc(diff)) %>% 
+  group_by(whos.higher) %>% 
+  summarise(count = n()) %>% 
+  na.omit() %>% 
+  ungroup() %>% 
+  mutate(prop = round(count/sum(count) * 100, 0))
+
+host_rating_caption <- str_wrap(glue("The hosts Season {data$Season[1]} scores matched or were very close on {compare.AndyMatt$count[2]} occassions, {compare.AndyMatt$prop[2]}% of the time and Andy consistently scored higher than 
+                                     Matt {scored.AndyMatt$count[1]} times ({scored.AndyMatt$prop[1]}%) compared to only {scored.AndyMatt$count[3]} instances when Matt scored higher than Andy. Their scores matched on {scored.AndyMatt$count[2]} occassions. 
+                                     Their average scores for this season were: {round(summary_stats$mean[2],1)} (Andy) and {round(summary_stats$mean[4],1)} (Matt)"), 95)
 
 host_rating_plt <- 
   data %>% 
@@ -291,22 +302,34 @@ host_rating_plt <-
   coord_flip()
 
 # bar plot for joint TNC rating vs IMDb ----------------------------------------
-consensus.2 <- data %>% 
+compare.TNCIMDB <- data %>% 
   select(TNC, IMDB) %>% 
   mutate(diff = TNC - IMDB) %>% 
-  mutate(diff.cat = ifelse(diff >= -0.5 & diff <= 0.5, "Agree", 
-                           ifelse(diff > 0.5, "Disagree +", "Disagree -"))) %>%
-  mutate(who.scored.higher = ifelse(diff.cat == "Disagree +", "TNC",
-                                    ifelse(diff.cat == "Disagree -", "IMDB", "Consensus"))) %>% 
+  mutate(diff.type = ifelse(diff >= -0.5 & diff <= 0.5, "Close",
+                            ifelse(diff > 0.5, "Disagree +", "Disagree -"))) %>% 
   arrange(desc(diff)) %>% 
-  group_by(who.scored.higher) %>% 
+  group_by(diff.type) %>% 
   summarise(count = n()) %>% 
   na.omit() %>% 
   ungroup() %>% 
   mutate(prop = round(count/sum(count) * 100, 0))
 
-TNCIMDB_rating_caption <- str_wrap(glue("The TNC/IMDb Season {data$Season[1]} scores matched or were very close on only {consensus.2$count[1]} occassions, {consensus.2$prop[1]}% of the time and the IMDb scores were consistently higher than 
-                                     the joint TNC score {consensus.2$count[2]} times ({consensus.2$prop[2]}%) compared to only {consensus.2$count[3]} instance when the joint TNC score was higher than that of IMDb ('Emissary').
+scored.TNCIMDB <- data %>% 
+  select(TNC, IMDB) %>% 
+  mutate(diff = TNC - IMDB) %>% 
+  mutate(whos.higher = ifelse(diff > 0, "TNC",
+                              ifelse(diff < 0, "IMDB",
+                                     ifelse(diff == 0, "MATCH!", "???")))) %>% 
+  arrange(desc(diff)) %>% 
+  group_by(whos.higher) %>% 
+  summarise(count = n()) %>% 
+  na.omit() %>% 
+  ungroup() %>% 
+  mutate(prop = round(count/sum(count) * 100, 0))
+
+
+TNCIMDB_rating_caption <- str_wrap(glue("The TNC/IMDb Season {data$Season[1]} scores matched or were very close on only {compare.TNCIMDB$count[1]} occassions, {compare.TNCIMDB$prop[1]}% of the time and the IMDb scores were consistently higher than 
+                                     the joint TNC score {scored.TNCIMDB$count[1]} times ({scored.TNCIMDB$prop[1]}%) compared to only {scored.TNCIMDB$count[2]} instances when the joint TNC score was higher than that of IMDb ('Emissary', 'Battlelines').
                                      The average scores for this season were: {round(summary_stats$mean[3],1)} (TNC) and {round(summary_stats$mean[1],1)} (IMDb)"), 100)
 
 joint_vs_imdb_rating_plt <- 
@@ -548,17 +571,17 @@ complete_k_data %>%
                    segment.angle = 20,
                    alpha = 0.7) +
   scale_color_manual(values = stellar_pal) +
-  labs(title = "DEEP SPACE NINE: SEASON 1",
+  labs(title = "",
        subtitle = "EPISODE GUIDE: SEASON QUADRANT (K-MEANS CLUSTER MODEL)",
-       caption = "BROUGHT TO YOU BY TRISTAN LOUTH-ROBINS. GITHUB: https://github.com/TristanLouthRobins",
+       caption = "",
        x = "", y = "") +
   theme_trek_clust() +
   theme(legend.title = element_blank(),
         legend.position = "none",
         legend.key = element_rect(fill = "#000000", color = NA)) 
 
-ggsave("exports-final/ds9-final_s1_cluster.png.png", width = 36, height = 24, units = "cm") 
-ggsave("exports-final/ds9-final_s1_cluster-square.png.png", width = 36, height = 36, units = "cm") 
+ggsave("exports-final/ds9-final_s1_cluster.png.png", width = 36, height = 24, units = "cm", dpi = 100) 
+ggsave("exports-final/ds9-final_s1_cluster-square.png.png", width = 36, height = 36, units = "cm", dpi = 100) 
 
 # summary statistics in one big infographic ------------------------------------
 
@@ -689,8 +712,8 @@ top3_plt_facet <-
   ggplot(aes(x=value, y=fct_reorder(Episode_name, value))) +
   geom_bar(aes(fill = tnc_col), stat = "identity") +
   scale_fill_identity() +
-  geom_text(aes(x=0.1, y=fct_reorder(Episode_name, value), label = (glue("{Episode_name}")), family = "Antonio"), color = "#000000", size = 3, hjust = 0) +
-  geom_text(aes(x=value + 0.5, y=fct_reorder(Episode_name, value), label = round(value,1)), family="Antonio", colour = "#FFFF33", size = 3) +
+  geom_text(aes(x=0.1, y=fct_reorder(Episode_name, value), label = (glue("{Episode_name}")), family = "Antonio"), color = "#000000", size = 4, hjust = 0) +
+  geom_text(aes(x=value + 0.5, y=fct_reorder(Episode_name, value), label = round(value,1)), family="Antonio", colour = "#FFFF33", size = 4) +
   labs(
     subtitle = "TOP 3 EPISODES",
     x = element_blank(), 
@@ -703,7 +726,7 @@ top3_plt_facet <-
 
 top3_plt_facet
 
-ggsave("exports-final/top_3_scores_facet.png",width = 24, height = 8, units = "cm") 
+ggsave("exports-final/top_3_scores_facet.png",width = 24, height = 8, units = "cm", dpi = 100) 
 
 top_episode <- 
   top_all %>% 
@@ -762,5 +785,5 @@ tngds9s1plt <-
 
 tngds9s1plt
 
-ggsave("exports-final/tnc_ds9_s1.png", plot = tngds9s1plt, width = 80, height = 60, units = "cm", dpi = 300) 
+ggsave("exports-final/tnc_ds9_s1.png", plot = tngds9s1plt, width = 80, height = 60, units = "cm", dpi = 100) 
    
