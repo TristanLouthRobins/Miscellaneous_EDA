@@ -1,5 +1,5 @@
 # Miscellaneous_EDA
-A repo for miscellaneous Exploratory Data Analysis (warning: may contain traces of genuine nerd)
+A repo for misc. data analysis (mostly Star Trek: TNC stats)
 
 For example, here's some viz I generated from my dataset for the podcast, Star Trek - The Next Conversation.
 
