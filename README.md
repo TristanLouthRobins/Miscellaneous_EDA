@@ -3,7 +3,9 @@ A repo for misc. data analysis (mostly Star Trek: TNC stats)
 
 For example, here's some viz I generated from my dataset for the podcast, Star Trek - The Next Conversation.
 
-![tnc_ds9_s1_EVERYTHING](https://user-images.githubusercontent.com/62044678/236374329-cc86a827-657d-45ef-b62b-0242366b23fc.png)
+## Trek DS9 Season 1 infographic.
+
+![tnc_ds9_s1](https://github.com/TristanLouthRobins/Miscellaneous_EDA/assets/62044678/32acd32f-38a2-4b86-abca-cea720fbc19e)
 
 ## Trek DS9 k-means cluster analysis of TNC and IMDb ratings. 
 ### Season 1
