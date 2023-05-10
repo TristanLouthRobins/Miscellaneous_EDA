@@ -13,5 +13,5 @@ For example, here's some viz I generated from my dataset for the podcast, Star T
 
 ## Trek TNG k-means cluster analysis of TNC and IMDb ratings. 
 ### Season 1
-![tng_s1_cluster](https://user-images.githubusercontent.com/62044678/226086386-f8926910-cebd-4367-9475-7fe957231c31.png)
+
 
