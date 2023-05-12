@@ -15,7 +15,4 @@ For example, here's some viz I generated from my dataset for the podcast, Star T
 ## Trek TNG Season 2 infographic.
 ![tnc_tng_s2](https://github.com/TristanLouthRobins/Miscellaneous_EDA/assets/62044678/5789279e-9864-4bbf-82c2-82e2358463fa)
 
-## k-means cluster analysis of TNC and IMDb ratings. 
-![ds9-final_s1_cluster png](https://user-images.githubusercontent.com/62044678/236374380-1092b3f6-c67a-4373-a646-8ee109358953.png)
-
 
