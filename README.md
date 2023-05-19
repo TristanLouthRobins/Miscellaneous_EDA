@@ -7,7 +7,7 @@ For example, here's some viz I generated from my dataset for the podcast, Star T
 ![tnc_ds9_s1](https://github.com/TristanLouthRobins/Miscellaneous_EDA/assets/62044678/0caedd58-c113-4bad-a5bd-5685cd159582)
 
 ## Trek ENT Season 1 infographic.
-![tnc_ent_s1](https://github.com/TristanLouthRobins/Miscellaneous_EDA/assets/62044678/30ebe722-5e47-453e-98b0-e6d32121bad2)
+![tnc_ent_s1](https://github.com/TristanLouthRobins/Miscellaneous_EDA/assets/62044678/d98fcef5-9794-4dd6-8cbc-4a88b1ca61af)
 
 ## Trek TNG Season 1 infographic.
 ![tnc_tng_s1](https://github.com/TristanLouthRobins/Miscellaneous_EDA/assets/62044678/1362f3af-c2f9-4399-824d-80a3e4c1881c)
