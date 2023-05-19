@@ -1,13 +1,13 @@
 # Data EDA for Star Trek: The Next Conversation podcast ------------------------
 # Hosted by Matt Mira and Andy Secunda -----------------------------------------
-# This EDA script is for their episodes reviewing Star Trek: ENT ---------------
+# This EDA script is for their episodes reviewing Star Trek: SNW ---------------
 # Season 1 (26 episodes in total) ----------------------------------------------
-# Latest update: v1.02 (15 May 2023) ------------------------------------------
+# Latest update: v1.01 (12 May 2023) ------------------------------------------
 library(tidyverse)
 
 # import dataset ---------------------------------------------------------------
 data <- read_csv("star_trek_TNC/data/tnc.csv") %>% 
-  filter(Series == "ENT",
+  filter(Series == "SNW",
          Season == 1)
 
 # tidy data --------------------------------------------------------------------
@@ -31,11 +31,11 @@ data <-
          Matt_Watch = factor(Matt_Watch))
 
 # add new variables for character's Division (Command, Ops, Sciences, Civilian, Other) --
-var.cmd <- c("Archer", "Mayweather")
-var.ops <- c("Tucker", "Reed", "Daniels")
-var.sci <- c("T'Pol", "Sato", "Phlox")
+var.cmd <- c("Archer", "Una", "Ortegas")
+var.ops <- c("Hemmer", "Uhura", "La'an")
+var.sci <- c("Chapel", "M'Benga", "Spock")
 var.civ <- c("Other")
-var.oth <- c("Shran", "Porthos")
+var.oth <- c("Other")
 
 data <- 
   data %>% 
@@ -258,7 +258,7 @@ host_rating_plt <-
   geom_bar(stat = "identity", position = "dodge") +
   geom_vline(xintercept = summary_stats$mean[2], colour = "#FFCC33", size = 1, alpha = 0.7) +
   geom_vline(xintercept = summary_stats$mean[4], colour = "#3399FF", size = 1, alpha = 0.7) +
-#  annotate(geom = "text", x=10, y=data$Episode_number[1], label=host_rating_caption, size=4, colour="#E7FFFF", family = "Antonio", hjust=0, vjust=1, lineheight = 1.3) +
+  #  annotate(geom = "text", x=10, y=data$Episode_number[1], label=host_rating_caption, size=4, colour="#E7FFFF", family = "Antonio", hjust=0, vjust=1, lineheight = 1.3) +
   labs(
     subtitle = "THE HOSTS: ANDREW SECUNDA & MATT MIRA",
     x = element_blank(),
@@ -308,7 +308,7 @@ joint_vs_imdb_rating_plt <-
   geom_bar(stat = "identity", position = "dodge") +
   geom_vline(xintercept = summary_stats$mean[1], colour = "#FFFF33", size = 1, alpha = 0.7) +
   geom_vline(xintercept = summary_stats$mean[3], colour = "#72E2E4", size = 1, alpha = 0.7) +
-#  annotate(geom = "text", x=10, y=data$Episode_number[1], label=TNCIMDB_rating_caption, size=4, colour="#E7FFFF", family = "Antonio", hjust=0, vjust=1, lineheight = 1.3) +
+  #  annotate(geom = "text", x=10, y=data$Episode_number[1], label=TNCIMDB_rating_caption, size=4, colour="#E7FFFF", family = "Antonio", hjust=0, vjust=1, lineheight = 1.3) +
   labs(
     subtitle = "JOINT TNC SCORE VS IMDb",
     x = element_blank(),
@@ -329,7 +329,7 @@ ep_ratings_plt <- (host_rating_plt | joint_vs_imdb_rating_plt) + plot_annotation
                                                                                  caption = "",theme=theme_trek_header())  
 
 
-ggsave("star_trek_TNC/exports-ent-s1/tng-final_s1_scores.png",width = 48, height = 24, units = "cm", dpi = 100) 
+ggsave("star_trek_TNC/exports-snw-s1/snw-final_s1_scores.png",width = 48, height = 24, units = "cm", dpi = 100) 
 
 # 2. plotting the MVC (Most Valuable Character/Crewmember) ---------------------
 # bar plot of the DS9 MVC leaderboard ------------------------------------------
@@ -512,7 +512,7 @@ cluster_plot <-
   ggplot() +
   stat_density_2d(aes(x=TNC, y=IMDB), colour = "#46616E") +
   annotate(geom = "text", x=-2.2, y=3.2 ,label=cluster_caption, size=5, colour="#E7FFFF", family = "Antonio", hjust=0, vjust=1, lineheight = 1.3) +
-  annotate("text", x=2, y=2, size = 8, colour = cluster_txtcol, label = "PECAN PIE", fontface = 2, family = "Antonio") +
+  annotate("text", x=2, y=2, size = 8, colour = cluster_txtcol, label = "ICED TEA", fontface = 2, family = "Antonio") +
   annotate("text", x=1, y=1, size = 8, colour = cluster_txtcol, label = "LEMON WATER", fontface = 2, family = "Antonio") +
   annotate("text", x=0, y=0, size = 8, colour = cluster_txtcol, label = "NEUTRAL ZONE", fontface = 2, family = "Antonio") +
   annotate("text", x=-1, y=-1, size = 8, colour = cluster_txtcol, label = "BADLANDS", fontface = 2, family = "Antonio") +
@@ -542,16 +542,14 @@ cluster_plot <-
 
 cluster_plot
 
-ggsave("star_trek_TNC/exports-ent-s1/tng-final_s1_cluster.png", width = 36, height = 24, units = "cm",  dpi = 100) 
-ggsave("star_trek_TNC/exports-ent-s1/tng-final_s1_cluster-square.png", width = 36, height = 36, units = "cm",  dpi = 100) 
+ggsave("star_trek_TNC/exports-snw-s1/snw-final_s1_cluster.png", width = 36, height = 24, units = "cm",  dpi = 100) 
+ggsave("star_trek_TNC/exports-snw-s1/snw-final_s1_cluster-square.png", width = 36, height = 36, units = "cm",  dpi = 100) 
 
 # summary statistics in one big infographic ------------------------------------
 
 # Combined scores (Andy, Matt, TNC, IMDB)
 # 1. plotting the episode scores -----------------------------------------------
 # bar plot for averaged scores--------------------------------------------------
-overall_mean <- mean(summary_stats$mean)
-
 all_rating_plt <- 
   data %>% 
   # pivot the data
@@ -564,7 +562,7 @@ all_rating_plt <-
   ggplot(aes(fill = Weighted)) +
   geom_bar(aes(x=Weighted, y=fct_reorder(Episode_name, Episode_number)), stat = "identity", position = "dodge") +
   scale_fill_gradient(low = "#CD6363", high = "#99FF66") + 
-  geom_vline(aes(xintercept = overall_mean, colour=Weighted, alpha = 0.5), size = 1) +
+  geom_vline(aes(xintercept = summary_stats$mean[2], colour=Weighted, alpha = 0.5), size = 1) +
   scale_colour_gradient(low = "#CD6363", high = "#99FF66") + 
   geom_text(aes(x=Weighted + 0.5, y=fct_reorder(Episode_name, Episode_number), label = round(Weighted,1)), family="Antonio", colour = "#FFFF33", size = 8) +
   labs(
@@ -581,9 +579,9 @@ all_rating_plt <-
 
 all_rating_plt
 
-ggsave("star_trek_TNC/exports-ent-s1/final_s1_all_scores.png",width = 24, height = 24, units = "cm",  dpi = 100) 
+ggsave("star_trek_TNC/exports-snw-s1/final_s1_all_scores.png",width = 24, height = 24, units = "cm",  dpi = 100) 
 
-# order the same plot by scores ------------------------------------------------
+# order the same plot by scores ------------------------------------------------ 
 all_rating_plt_by_scores <- 
   data %>% 
   # pivot the data
@@ -596,7 +594,7 @@ all_rating_plt_by_scores <-
   ggplot(aes(fill = Weighted)) +
   geom_bar(aes(x=Weighted, y=fct_reorder(Episode_name, -Weighted)), stat = "identity", position = "dodge") +
   scale_fill_gradient(low = "#CD6363", high = "#99FF66") + 
-  geom_vline(aes(xintercept = overall_mean, colour=Weighted, alpha = 0.5), size = 1) +
+  geom_vline(aes(xintercept = summary_stats$mean[2], colour=Weighted, alpha = 0.5), size = 1) +
   scale_colour_gradient(low = "#CD6363", high = "#99FF66") + 
   geom_text(aes(x=Weighted + 0.5, y=fct_reorder(Episode_name, Episode_number), label = round(Weighted,1)), family="Antonio", colour = "#FFFF33", size = 8) +
   labs(
@@ -613,7 +611,7 @@ all_rating_plt_by_scores <-
 
 all_rating_plt_by_scores
 
-ggsave("star_trek_TNC/exports-ent-s1/final_s1_all_order_by_scores.png",width = 24, height = 24, units = "cm",  dpi = 100) 
+ggsave("star_trek_TNC/exports-snw-s1/final_s1_all_order_by_scores.png",width = 24, height = 24, units = "cm",  dpi = 100) 
 
 # top 3 episodes  --------------------------------------------------------------
 # create a vector of image 'headshots' of TNC/IMDb indicative images -----------
@@ -675,7 +673,7 @@ top_all <- top_all %>%
 library(tidytext) # <-- for reorder_within function
 # This allows the reordering across factors (rating) to work properly. It was not working with fct_reorder.
 # https://juliasilge.github.io/tidytext/reference/reorder_within.html
- 
+
 top3_plt_facet <- 
   top_all %>% 
   ggplot(aes(x=value, y=reorder_within(Episode_name, value, rating))) +
@@ -696,7 +694,7 @@ top3_plt_facet <-
 
 top3_plt_facet
 
-ggsave("star_trek_TNC/exports-ent-s1/top_3_scores_facet.png",width = 24, height = 8, units = "cm",  dpi = 100) 
+ggsave("star_trek_TNC/exports-snw-s1/top_3_scores_facet.png",width = 24, height = 8, units = "cm",  dpi = 100) 
 
 top_episode <- 
   top_all %>% 
@@ -719,7 +717,7 @@ top_episode <-
 
 top_episode
 
-ggsave("star_trek_TNC/exports-ent-s1/top_episode.png",width = 12, height = 12, units = "cm",  dpi = 100) 
+ggsave("star_trek_TNC/exports-snw-s1/top_episode.png",width = 12, height = 12, units = "cm",  dpi = 100) 
 
 # patch EVERYTHING together ----------------------------------------------------
 font_add("Star Trek TNG-Title", "/Users/tristanlouth-robins/Library/Fonts/Star Trek TNG-Title Regular.ttf")
@@ -731,7 +729,7 @@ summary <- str_wrap(glue("The hosts Season {data$Season[1]} scores matched or we
                                       with: {round(summary_stats$mean[2],1)} (Andy) and {round(summary_stats$mean[4],1)} (Matt.) The TNC/IMDb Season {data$Season[1]} 
                                       scores matched or were very close on only {compare.TNCIMDB$count[1]} occassions, {compare.TNCIMDB$prop[1]}% of the time and the IMDb scores 
                                       were significantly higher than the joint TNC score the majority of the time ({scored.TNCIMDB$count[1]}/25, {scored.TNCIMDB$prop[1]}%) compared 
-                                      to only {scored.TNCIMDB$count[3]} instances when the joint TNC score was marginally higher than that of IMDb ('The Andorian Incident', 'Dear Doctor' and 'Shockwave Part 1').
+                                      to only {scored.TNCIMDB$count[3]} instances when the joint TNC score was marginally higher than that of IMDb ('The Andorian Incident' and 'Dear Doctor').
                                       The average scores for this season were: {round(summary_stats$mean[3],1)} (TNC) and {round(summary_stats$mean[1],1)} (IMDb)"), 200)
 
 
@@ -763,4 +761,3 @@ tncents1plt <-
 tncents1plt
 
 ggsave("star_trek_TNC/exports-ent-s1/tnc_ent_s1.png", plot = tncents1plt, width = 80, height = 60, units = "cm", dpi = 100) 
-

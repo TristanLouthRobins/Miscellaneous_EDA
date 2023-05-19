@@ -1,14 +1,14 @@
 # Data EDA for Star Trek: The Next Conversation podcast ------------------------
 # Hosted by Matt Mira and Andy Secunda -----------------------------------------
 # This EDA script is for their episodes reviewing Star Trek: ENT ---------------
-# Season 1 (26 episodes in total) ----------------------------------------------
-# Latest update: v1.02 (15 May 2023) ------------------------------------------
+# Season 2 (26 episodes in total) ----------------------------------------------
+# Latest update: v1.02 (19 May 2023) ------------------------------------------
 library(tidyverse)
 
 # import dataset ---------------------------------------------------------------
 data <- read_csv("star_trek_TNC/data/tnc.csv") %>% 
   filter(Series == "ENT",
-         Season == 1)
+         Season == 2)
 
 # tidy data --------------------------------------------------------------------
 data <- 
@@ -258,7 +258,7 @@ host_rating_plt <-
   geom_bar(stat = "identity", position = "dodge") +
   geom_vline(xintercept = summary_stats$mean[2], colour = "#FFCC33", size = 1, alpha = 0.7) +
   geom_vline(xintercept = summary_stats$mean[4], colour = "#3399FF", size = 1, alpha = 0.7) +
-#  annotate(geom = "text", x=10, y=data$Episode_number[1], label=host_rating_caption, size=4, colour="#E7FFFF", family = "Antonio", hjust=0, vjust=1, lineheight = 1.3) +
+  #  annotate(geom = "text", x=10, y=data$Episode_number[1], label=host_rating_caption, size=4, colour="#E7FFFF", family = "Antonio", hjust=0, vjust=1, lineheight = 1.3) +
   labs(
     subtitle = "THE HOSTS: ANDREW SECUNDA & MATT MIRA",
     x = element_blank(),
@@ -308,7 +308,7 @@ joint_vs_imdb_rating_plt <-
   geom_bar(stat = "identity", position = "dodge") +
   geom_vline(xintercept = summary_stats$mean[1], colour = "#FFFF33", size = 1, alpha = 0.7) +
   geom_vline(xintercept = summary_stats$mean[3], colour = "#72E2E4", size = 1, alpha = 0.7) +
-#  annotate(geom = "text", x=10, y=data$Episode_number[1], label=TNCIMDB_rating_caption, size=4, colour="#E7FFFF", family = "Antonio", hjust=0, vjust=1, lineheight = 1.3) +
+  #  annotate(geom = "text", x=10, y=data$Episode_number[1], label=TNCIMDB_rating_caption, size=4, colour="#E7FFFF", family = "Antonio", hjust=0, vjust=1, lineheight = 1.3) +
   labs(
     subtitle = "JOINT TNC SCORE VS IMDb",
     x = element_blank(),
@@ -329,7 +329,7 @@ ep_ratings_plt <- (host_rating_plt | joint_vs_imdb_rating_plt) + plot_annotation
                                                                                  caption = "",theme=theme_trek_header())  
 
 
-ggsave("star_trek_TNC/exports-ent-s1/tng-final_s1_scores.png",width = 48, height = 24, units = "cm", dpi = 100) 
+ggsave("star_trek_TNC/exports-ent-s2/ent-final_s2_scores.png",width = 48, height = 24, units = "cm", dpi = 100) 
 
 # 2. plotting the MVC (Most Valuable Character/Crewmember) ---------------------
 # bar plot of the DS9 MVC leaderboard ------------------------------------------
@@ -378,7 +378,7 @@ MVC.tally <-
   summarise(count = n()) %>% 
   arrange(Episode_number) %>% 
   pivot_wider(names_from = Character, values_from = count, values_fill = 0) %>% 
-  pivot_longer(cols = 3:10, names_to = "Character", values_to = "count") %>% 
+  pivot_longer(cols = 3:8, names_to = "Character", values_to = "count") %>% 
   group_by(Character) %>% 
   mutate(total = cumsum(count),
          Character = toupper(factor(Character)),
@@ -402,7 +402,7 @@ ranks <- MVC.tally %>%
   group_by(Episode_number) %>% 
   mutate(rank = rank(total, ties.method = "first")) 
 
-sel_chr <- c("T'POL", "ARCHER", "TRIP", "PHLOX", "HOSHI", "REED", "DANIELS", "MAYWEATHER")
+sel_chr <- c("ARCHER", "TRIP", "T'POL", "PHLOX", "MAYWEATHER", "REED")
 
 current_rank <- 
   ranks %>% 
@@ -444,8 +444,8 @@ hlt_rank_plt <- function(selection){
     scale_x_continuous(limits = c(0, 27), breaks = c(1:26)) 
 } 
 
-# MVC_plt - highlight the top 3 MVCs for this season -----
-MVC_ranks_plt <- hlt_rank_plt(c("T'POL", "ARCHER", "TRIP", "PHLOX", "HOSHI", "REED", "DANIELS", "MAYWEATHER"))
+# MVC_plt - highlight MVCs for this season -----
+MVC_ranks_plt <- hlt_rank_plt(c("ARCHER", "TRIP", "T'POL", "PHLOX", "MAYWEATHER", "REED"))
 
 # patch these plots together ---------------------------------------------------
 
@@ -453,41 +453,7 @@ MVC_plt <- (MVC_plt | MVC_ranks_plt) + plot_annotation(title = '',
                                                        subtitle = "",
                                                        caption = "",theme=theme_trek_header())  
 
-ggsave("star_trek_TNC/exports-ent-s1/tng_s1_MVC-wotitle.png",width = 48, height = 24, units = "cm",  dpi = 100) 
-
-# animate the MVC leaderboard --------------------------------------------------
-library(gganimate)
-ranks <- ranks %>% 
-  mutate(div_col = ifelse(Character %in% c("PICARD", "LA FORGE", "RIKER"), '#CD6363', # Command
-                          ifelse(Character %in% c("DATA", "WORF"), '#B5A424', # Ops / Security
-                                 ifelse(Character %in% c("TROI", "B.CRUSHER"), '#3399FF', '#4C4D47')))) # Sciences, if not: Civilian/Other
-
-anim <- 
-  ranks %>% 
-  ggplot(aes(rank, group = Character)) +
-  geom_tile(aes(y = total/2, 
-                height = total,
-                width = 0.9, fill = div_col), alpha = 0.9) +
-  scale_fill_identity() +
-  geom_text(aes(y = 0, label = Character), colour = "#FFFFFF", family = "Antonio", size = 4, hjust = -0.1) +
-  geom_image(aes(y=total + 0.6, image = img), size = 0.09) +
-  coord_cartesian(clip = "off", expand = FALSE) +
-  scale_y_continuous(limits = c(0, 12), breaks = c(1,2,3,4,5,6,7,8,9,10,11)) +
-  coord_flip() +
-  theme_trek() +
-  theme(axis.text.y = element_blank()) +
-  labs(title = "THE NEXT GENERATION", 
-       subtitle = "EPISODE NUMBER: {closest_state}/25", x = "", y= "") +
-  transition_states(Episode_number, 
-                    transition_length = 10,
-                    state_length = 5) +
-  ease_aes('cubic-in-out')
-
-#animate(anim, fps = 25,
-#        duration = 10,
-#        width = 400,
-#        height = 400,
-#        end_pause = 60)
+ggsave("star_trek_TNC/exports-ent-s2/ent_s2_MVC-wotitle.png",width = 48, height = 24, units = "cm",  dpi = 100) 
 
 # cluster analysis of episode rankings -----------------------------------------
 
@@ -542,8 +508,8 @@ cluster_plot <-
 
 cluster_plot
 
-ggsave("star_trek_TNC/exports-ent-s1/tng-final_s1_cluster.png", width = 36, height = 24, units = "cm",  dpi = 100) 
-ggsave("star_trek_TNC/exports-ent-s1/tng-final_s1_cluster-square.png", width = 36, height = 36, units = "cm",  dpi = 100) 
+ggsave("star_trek_TNC/exports-ent-s2/tng-final_s2_cluster.png", width = 36, height = 24, units = "cm",  dpi = 100) 
+ggsave("star_trek_TNC/exports-ent-s2/tng-final_s2_cluster-square.png", width = 36, height = 36, units = "cm",  dpi = 100) 
 
 # summary statistics in one big infographic ------------------------------------
 
@@ -581,9 +547,10 @@ all_rating_plt <-
 
 all_rating_plt
 
-ggsave("star_trek_TNC/exports-ent-s1/final_s1_all_scores.png",width = 24, height = 24, units = "cm",  dpi = 100) 
+ggsave("star_trek_TNC/exports-ent-s2/final_s2_all_scores.png",width = 24, height = 24, units = "cm",  dpi = 100) 
 
 # order the same plot by scores ------------------------------------------------
+
 all_rating_plt_by_scores <- 
   data %>% 
   # pivot the data
@@ -613,7 +580,7 @@ all_rating_plt_by_scores <-
 
 all_rating_plt_by_scores
 
-ggsave("star_trek_TNC/exports-ent-s1/final_s1_all_order_by_scores.png",width = 24, height = 24, units = "cm",  dpi = 100) 
+ggsave("star_trek_TNC/exports-ent-s2/final_s2_all_order_by_scores.png",width = 24, height = 24, units = "cm",  dpi = 100) 
 
 # top 3 episodes  --------------------------------------------------------------
 # create a vector of image 'headshots' of TNC/IMDb indicative images -----------
@@ -642,10 +609,10 @@ top3 <- function(season, who, who_str){
 }
 
 # generate the datatables of top 3 episodes for each -- 
-top_TNC <- top3(1,TNC,"TNC")
-top_IMDB <- top3(1,IMDB,"IMDB")
-top_Andy <- top3(1,Andy_rating,"Andy_rating")
-top_Matt <- top3(1,Matt_rating,"Matt_rating") 
+top_TNC <- top3(2,TNC,"TNC")
+top_IMDB <- top3(2,IMDB,"IMDB")
+top_Andy <- top3(2,Andy_rating,"Andy_rating")
+top_Matt <- top3(2,Matt_rating,"Matt_rating") 
 
 # single datatable for visualisation --
 top_all <- bind_rows(top_TNC, top_IMDB, top_Andy, top_Matt) %>% 
@@ -675,7 +642,7 @@ top_all <- top_all %>%
 library(tidytext) # <-- for reorder_within function
 # This allows the reordering across factors (rating) to work properly. It was not working with fct_reorder.
 # https://juliasilge.github.io/tidytext/reference/reorder_within.html
- 
+
 top3_plt_facet <- 
   top_all %>% 
   ggplot(aes(x=value, y=reorder_within(Episode_name, value, rating))) +
@@ -696,7 +663,7 @@ top3_plt_facet <-
 
 top3_plt_facet
 
-ggsave("star_trek_TNC/exports-ent-s1/top_3_scores_facet.png",width = 24, height = 8, units = "cm",  dpi = 100) 
+ggsave("star_trek_TNC/exports-ent-s2/top_3_scores_facet.png",width = 24, height = 8, units = "cm",  dpi = 100) 
 
 top_episode <- 
   top_all %>% 
@@ -719,7 +686,7 @@ top_episode <-
 
 top_episode
 
-ggsave("star_trek_TNC/exports-ent-s1/top_episode.png",width = 12, height = 12, units = "cm",  dpi = 100) 
+ggsave("star_trek_TNC/exports-ent-s2/top_episode.png",width = 12, height = 12, units = "cm",  dpi = 100) 
 
 # patch EVERYTHING together ----------------------------------------------------
 font_add("Star Trek TNG-Title", "/Users/tristanlouth-robins/Library/Fonts/Star Trek TNG-Title Regular.ttf")
@@ -736,7 +703,7 @@ summary <- str_wrap(glue("The hosts Season {data$Season[1]} scores matched or we
 
 
 # set up a base layer --
-title <- "STAR TREK: THE NEXT CONVERSATION - ENTERPRISE: SEASON 1"
+title <- "STAR TREK: THE NEXT CONVERSATION - ENTERPRISE: SEASON 2"
 caption <- "BROUGHT TO YOU BY TRISTAN LOUTH-ROBINS. GITHUB: https://github.com/TristanLouthRobins"
 plot.bg <- "#000000"
 
@@ -751,7 +718,7 @@ base <- ggplot() +
         plot.margin = margin(1,1,1,1, "cm"),
         plot.background = element_rect(fill = "#000000", colour = "#000000"))
 
-tncents1plt <- 
+tncents2plt <- 
   base +
   inset_element(ep_ratings_plt, left = 0.01, right = 0.601, top = 0.99, bottom = 0.60) +
   inset_element(all_rating_plt, left = 0.605, right = 0.995, top = 0.99, bottom = 0.60) +
@@ -760,7 +727,7 @@ tncents1plt <-
   inset_element(top3_plt_facet, left = 0.01, right = 0.48, top = 0.19, bottom = 0.01) +
   inset_element(top_episode, left = 0.481, right = 0.6, top = 0.19, bottom = 0.01)
 
-tncents1plt
+tncents2plt
 
-ggsave("star_trek_TNC/exports-ent-s1/tnc_ent_s1.png", plot = tncents1plt, width = 80, height = 60, units = "cm", dpi = 100) 
+ggsave("star_trek_TNC/exports-ent-s2/tnc_ent_s2.png", plot = tncents1plt, width = 80, height = 60, units = "cm", dpi = 100) 
 

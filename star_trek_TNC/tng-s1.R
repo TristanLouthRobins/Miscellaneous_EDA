@@ -551,6 +551,8 @@ ggsave("star_trek_TNC/exports-tng-s1/tng-final_s1_cluster-square.png", width = 3
 # Combined scores (Andy, Matt, TNC, IMDB)
 # 1. plotting the episode scores -----------------------------------------------
 # bar plot for averaged scores--------------------------------------------------
+overall_mean <- mean(summary_stats$mean)
+
 all_rating_plt <- 
   data %>% 
   # pivot the data
@@ -563,7 +565,7 @@ all_rating_plt <-
   ggplot(aes(fill = Weighted)) +
   geom_bar(aes(x=Weighted, y=fct_reorder(Episode_name, Episode_number)), stat = "identity", position = "dodge") +
   scale_fill_gradient(low = "#CD6363", high = "#99FF66") + 
-  geom_vline(aes(xintercept = summary_stats$mean[2], colour=Weighted, alpha = 0.5), size = 1) +
+  geom_vline(aes(xintercept = overall_mean, colour=Weighted, alpha = 0.5), size = 1) +
   scale_colour_gradient(low = "#CD6363", high = "#99FF66") + 
   geom_text(aes(x=Weighted + 0.5, y=fct_reorder(Episode_name, Episode_number), label = round(Weighted,1)), family="Antonio", colour = "#FFFF33", size = 8) +
   #  geom_vline(xintercept = summary_stats$mean[2], colour = "#FFCC33", size = 1, alpha = 0.7) +
@@ -597,7 +599,7 @@ all_rating_plt_by_scores <-
   ggplot(aes(fill = Weighted)) +
   geom_bar(aes(x=Weighted, y=fct_reorder(Episode_name, -Weighted)), stat = "identity", position = "dodge") +
   scale_fill_gradient(low = "#CD6363", high = "#99FF66") + 
-  geom_vline(aes(xintercept = summary_stats$mean[2], colour=Weighted, alpha = 0.5), size = 1) +
+  geom_vline(aes(xintercept = overall_mean, colour=Weighted, alpha = 0.5), size = 1) +
   scale_colour_gradient(low = "#CD6363", high = "#99FF66") + 
   geom_text(aes(x=Weighted + 0.5, y=fct_reorder(Episode_name, Episode_number), label = round(Weighted,1)), family="Antonio", colour = "#FFFF33", size = 8) +
   #  geom_vline(xintercept = summary_stats$mean[2], colour = "#FFCC33", size = 1, alpha = 0.7) +
