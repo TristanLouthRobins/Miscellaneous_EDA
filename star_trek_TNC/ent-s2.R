@@ -2,7 +2,7 @@
 # Hosted by Matt Mira and Andy Secunda -----------------------------------------
 # This EDA script is for their episodes reviewing Star Trek: ENT ---------------
 # Season 2 (26 episodes in total) ----------------------------------------------
-# Latest update: v1.02 (19 May 2023) ------------------------------------------
+# Latest update: v1.02 (20 May 2023) ------------------------------------------
 library(tidyverse)
 
 # import dataset ---------------------------------------------------------------
@@ -352,7 +352,7 @@ MVC_leaderboard <- MVC_leaderboard %>%
     ggplot(aes(x=count, y=fct_reorder(Character, count))) +
     geom_bar(aes(fill = div_col), stat = "identity") +
     scale_fill_identity() +
-    geom_image(aes(x=count, y=fct_reorder(Character, count), image = img), size = 0.11) +
+    geom_image(aes(x=count, y=fct_reorder(Character, count), image = img), size = 0.15) +
     # MVC 1
     # geom_text(aes(x=2, y=9, label = toupper(glue("+ 1 VOTE ({current_ep})")), family = "Antonio"), color = "#FFFF9C", size = 4) + 
     # MVC 2
@@ -362,7 +362,7 @@ MVC_leaderboard <- MVC_leaderboard %>%
       subtitle = "MVC LEADERBOARD",
       x = element_blank(),
       y = element_blank()) +
-    scale_x_continuous(limits = c(0, 16), breaks = c(0:15)) +
+    scale_x_continuous(limits = c(0, 17), breaks = c(0:16)) +
     theme_trek() +
     theme(axis.text.y = element_text(family = "Antonio", face = "bold", size = 14, colour = "#646DCC")))
 
@@ -457,7 +457,7 @@ ggsave("star_trek_TNC/exports-ent-s2/ent_s2_MVC-wotitle.png",width = 48, height 
 
 # cluster analysis of episode rankings -----------------------------------------
 
-k_data <- data %>% slice(0:(current_ep_num-1)) %>%  select("Episode_name", "Matt_rating", "Andy_rating", "TNC", "IMDB")
+k_data <- data %>% slice(0:(current_ep_num)) %>%  select("Episode_name", "Matt_rating", "Andy_rating", "TNC", "IMDB")
 episodes <- k_data[,1]
 tnc_score <- k_data[,4] # Here, we're grabbing the TNC score as an un-scaled variable
 imdb_score <- k_data[,5] # As above, but with IMDB
@@ -649,12 +649,13 @@ top3_plt_facet <-
   geom_bar(aes(fill = tnc_col), stat = "identity") +
   scale_fill_identity() +
   geom_text(aes(x=0.1, y=reorder_within(Episode_name, value, rating), label = (glue("{Episode_name}")), family = "Antonio"), color = "#000000", size = 5, hjust = 0) +
-  geom_text(aes(x=value + 0.5, y=reorder_within(Episode_name, value, rating), label = round(value,1)), family="Antonio", colour = "#FFFF33", size = 5) +
+  geom_point(aes(x=value - 1, y=reorder_within(Episode_name, value, rating)), colour = "#000000", size = 11) +
+  geom_text(aes(x=value - 1, y=reorder_within(Episode_name, value, rating), label = round(value,1)), family="Antonio", colour = "#FFFF33", size = 5) +
   labs(
     subtitle = "TOP 3 EPISODES",
     x = element_blank(), 
     y = element_blank()) +
-  scale_x_continuous(limits = c(0, 10), breaks = c(1,2,3,4,5,6,7,8,9,10)) +
+  scale_x_continuous(limits = c(0, 11), breaks = c(1,2,3,4,5,6,7,8,9,10)) +
   theme_trek() +
   theme(axis.text.x = element_blank(),
         axis.text.y = element_blank()) +
@@ -674,7 +675,8 @@ top_episode <-
   geom_image(aes(x=1, y=fct_reorder(rating, value), image = img), size = 0.15) +
   geom_text(aes(x=2, y=fct_reorder(rating, value), label = (glue("{Episode_name}")), family = "Antonio"), color = "#000000", size = 5, hjust = 0) +
   # extra text annotation for Andy's joint favourite, "Duet" which he also scored 9.5
-  geom_text(aes(x=value + 0.5, y=fct_reorder(rating, value), label = round(value,1)), family="Antonio", colour = "#FFFF33", size = 5) +
+  geom_point(aes(x=value -1, y=fct_reorder(rating, value)), colour = "#000000", size = 11) +
+  geom_text(aes(x=value -1, y=fct_reorder(rating, value), label = round(value,1)), family="Antonio", colour = "#FFFF33", size = 5) +
   labs(
     subtitle = "TOP EPISODES",
     x = element_blank(), 
@@ -697,8 +699,8 @@ summary <- str_wrap(glue("The hosts Season {data$Season[1]} scores matched or we
                                       {scored.AndyMatt$count[3]} instances when Matt scored higher than Andy. Their average scores were very close to each other 
                                       with: {round(summary_stats$mean[2],1)} (Andy) and {round(summary_stats$mean[4],1)} (Matt.) The TNC/IMDb Season {data$Season[1]} 
                                       scores matched or were very close on only {compare.TNCIMDB$count[1]} occassions, {compare.TNCIMDB$prop[1]}% of the time and the IMDb scores 
-                                      were significantly higher than the joint TNC score the majority of the time ({scored.TNCIMDB$count[1]}/25, {scored.TNCIMDB$prop[1]}%) compared 
-                                      to only {scored.TNCIMDB$count[3]} instances when the joint TNC score was marginally higher than that of IMDb ('The Andorian Incident', 'Dear Doctor' and 'Shockwave Part 1').
+                                      were significantly higher than the joint TNC score the majority of the time ({scored.TNCIMDB$count[1]}/26, {scored.TNCIMDB$prop[1]}%) compared 
+                                      to {scored.TNCIMDB$count[2]} instances when the joint TNC score was higher than that of IMDb.
                                       The average scores for this season were: {round(summary_stats$mean[3],1)} (TNC) and {round(summary_stats$mean[1],1)} (IMDb)"), 200)
 
 
@@ -729,5 +731,5 @@ tncents2plt <-
 
 tncents2plt
 
-ggsave("star_trek_TNC/exports-ent-s2/tnc_ent_s2.png", plot = tncents1plt, width = 80, height = 60, units = "cm", dpi = 100) 
+ggsave("star_trek_TNC/exports-ent-s2/tnc_ent_s2.png", plot = tncents2plt, width = 80, height = 60, units = "cm", dpi = 100) 
 

@@ -2,7 +2,7 @@
 # Hosted by Matt Mira and Andy Secunda -----------------------------------------
 # This EDA script is for their episodes reviewing Star Trek: ENT ---------------
 # Season 1 (26 episodes in total) ----------------------------------------------
-# Latest update: v1.02 (15 May 2023) ------------------------------------------
+# Latest update: v1.02 (15 May 2023) -------------------------------------------
 library(tidyverse)
 
 # import dataset ---------------------------------------------------------------
@@ -682,7 +682,8 @@ top3_plt_facet <-
   geom_bar(aes(fill = tnc_col), stat = "identity") +
   scale_fill_identity() +
   geom_text(aes(x=0.1, y=reorder_within(Episode_name, value, rating), label = (glue("{Episode_name}")), family = "Antonio"), color = "#000000", size = 5, hjust = 0) +
-  geom_text(aes(x=value + 0.5, y=reorder_within(Episode_name, value, rating), label = round(value,1)), family="Antonio", colour = "#FFFF33", size = 5) +
+  geom_point(aes(x=value - 1, y=reorder_within(Episode_name, value, rating)), colour = "#000000", size = 11) +
+  geom_text(aes(x=value - 1, y=reorder_within(Episode_name, value, rating), label = round(value,1)), family="Antonio", colour = "#FFFF33", size = 5) +
   labs(
     subtitle = "TOP 3 EPISODES",
     x = element_blank(), 
@@ -707,7 +708,8 @@ top_episode <-
   geom_image(aes(x=1, y=fct_reorder(rating, value), image = img), size = 0.15) +
   geom_text(aes(x=2, y=fct_reorder(rating, value), label = (glue("{Episode_name}")), family = "Antonio"), color = "#000000", size = 5, hjust = 0) +
   # extra text annotation for Andy's joint favourite, "Duet" which he also scored 9.5
-  geom_text(aes(x=value + 0.5, y=fct_reorder(rating, value), label = round(value,1)), family="Antonio", colour = "#FFFF33", size = 5) +
+  geom_point(aes(x=value -1, y=fct_reorder(rating, value)), colour = "#000000", size = 11) +
+  geom_text(aes(x=value -1, y=fct_reorder(rating, value), label = round(value,1)), family="Antonio", colour = "#FFFF33", size = 5) +
   labs(
     subtitle = "TOP EPISODES",
     x = element_blank(), 

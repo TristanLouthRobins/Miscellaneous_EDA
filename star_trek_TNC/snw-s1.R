@@ -1,9 +1,11 @@
 # Data EDA for Star Trek: The Next Conversation podcast ------------------------
 # Hosted by Matt Mira and Andy Secunda -----------------------------------------
 # This EDA script is for their episodes reviewing Star Trek: SNW ---------------
-# Season 1 (26 episodes in total) ----------------------------------------------
-# Latest update: v1.01 (12 May 2023) ------------------------------------------
+# Season 1 (10 episodes in total) ----------------------------------------------
+# Latest update: v1.10 (6 June 2023) ------------------------------------------
 library(tidyverse)
+
+getwd()
 
 # import dataset ---------------------------------------------------------------
 data <- read_csv("star_trek_TNC/data/tnc.csv") %>% 
@@ -31,7 +33,7 @@ data <-
          Matt_Watch = factor(Matt_Watch))
 
 # add new variables for character's Division (Command, Ops, Sciences, Civilian, Other) --
-var.cmd <- c("Archer", "Una", "Ortegas")
+var.cmd <- c("Pike", "Una", "Ortegas", "Kirk")
 var.ops <- c("Hemmer", "Uhura", "La'an")
 var.sci <- c("Chapel", "M'Benga", "Spock")
 var.civ <- c("Other")
@@ -107,20 +109,20 @@ font_add("Antonio", "/Users/tristanlouth-robins/Library/Fonts/Antonio-VariableFo
 font_add("Jefferies Extended", "/Users/tristanlouth-robins/Library/Fonts/JEFFE___.TTF")
 
 # create a vector of image 'headshots' of DS9 characters -----------------------
-images_tng <- c(
-  "star_trek_TNC/images/headshots/ent/archer.jpg",
-  "star_trek_TNC/images/headshots/ent/daniels.jpg",
-  "star_trek_TNC/images/headshots/ent/mayweather.jpg",
-  "star_trek_TNC/images/headshots/ent/phlox.jpg",
-  "star_trek_TNC/images/headshots/ent/reed.jpg",
-  "star_trek_TNC/images/headshots/ent/sato.jpg",
-  "star_trek_TNC/images/headshots/ent/shran.jpg",
-  "star_trek_TNC/images/headshots/ent/tpol.jpg",
-  "star_trek_TNC/images/headshots/ent/tucker.jpg",
-  "star_trek_TNC/images/headshots/ent/porthos.jpg")
+images_snw <- c(
+  "star_trek_TNC/images/headshots/snw/chapel.jpg",
+  "star_trek_TNC/images/headshots/snw/hemmer.jpg",
+  "star_trek_TNC/images/headshots/snw/kirk.jpg",
+  "star_trek_TNC/images/headshots/snw/laan.jpg",
+  "star_trek_TNC/images/headshots/snw/mbenga.jpg",
+  "star_trek_TNC/images/headshots/snw/ortegas.jpg",
+  "star_trek_TNC/images/headshots/snw/pike.jpg",
+  "star_trek_TNC/images/headshots/snw/spock.jpg",
+  "star_trek_TNC/images/headshots/snw/uhura.jpg",
+  "star_trek_TNC/images/headshots/snw/una.jpg")
 
 # apply cropcircles to create circular images representing MVCs ----------------
-image_df <- tibble(y = 1:10, images = images_tng) %>% 
+image_df <- tibble(y = 1:10, images = images_snw) %>% 
   mutate(images_cropped = circle_crop(images))
 
 images <- image_df$images_cropped
@@ -138,16 +140,16 @@ image_df %>%
 MVC_leaderboard <- 
   MVC_leaderboard %>% 
   mutate(Character = toupper(Character)) %>% 
-  mutate(img = ifelse(Character == "ARCHER", images[1], 
-                      ifelse(Character == "DANIELS", images[2], 
-                             ifelse(Character == "MAYWEATHER", images[3],
-                                    ifelse(Character == "PHLOX", images[4],
-                                           ifelse(Character == "REED", images[5], 
-                                                  ifelse(Character == "HOSHI", images[6], 
-                                                         ifelse(Character == "SHRAN", images[7], 
-                                                                ifelse(Character == "T'POL", images[8], 
-                                                                       ifelse(Character == "TRIP", images[9], 
-                                                                              ifelse(Character == "OTHER", images[10],
+  mutate(img = ifelse(Character == "CHAPEL", images[1], 
+                      ifelse(Character == "HEMMER", images[2], 
+                             ifelse(Character == "KIRK", images[3],
+                                    ifelse(Character == "LA'AN", images[4],
+                                           ifelse(Character == "M'BENGA", images[5], 
+                                                  ifelse(Character == "ORTEGAS", images[6], 
+                                                         ifelse(Character == "PIKE", images[7], 
+                                                                ifelse(Character == "SPOCK", images[8], 
+                                                                       ifelse(Character == "UHURA", images[9], 
+                                                                              ifelse(Character == "UNA", images[10],
                                                                                      images[10])))))))))))
 
 
@@ -333,7 +335,7 @@ ggsave("star_trek_TNC/exports-snw-s1/snw-final_s1_scores.png",width = 48, height
 
 # 2. plotting the MVC (Most Valuable Character/Crewmember) ---------------------
 # bar plot of the DS9 MVC leaderboard ------------------------------------------
-sub_title <- glue("MVC VOTE LEADERBOARD ({eps_watched}/25 EPISODES)")
+sub_title <- glue("MVC VOTE LEADERBOARD ({eps_watched}/10 EPISODES)")
 current_ep <- data$Episode_name[eps_watched]
 current_ep_num <- data$Episode_number[eps_watched]
 
@@ -343,16 +345,18 @@ MVClb_caption <- str_wrap(glue(""), 45)
 
 # update MVC leaderboard dt with MVC division colours --------------------------
 MVC_leaderboard <- MVC_leaderboard %>% 
-  mutate(div_col = ifelse(Character %in% c("TRIP", "REED", "DANIELS"), '#CD6363', # Command
-                          ifelse(Character %in% c("ARCHER", "MAYWEATHER"), '#B5A424', # Ops / Security
-                                 ifelse(Character %in% c("HOSHI", "T'POL", "PHLOX"), '#3399FF', '#4C4D47')))) # Sciences, if not: Civilian/Other
+  mutate(div_col = ifelse(Character %in% c("PIKE", "UNA", "KIRK"), "#B5A424", # Command
+                          ifelse(Character %in% c("HEMMER", "LA'AN", "UHURA"), "#CD6363", # Ops / Security
+                                 ifelse(Character %in% c("", "CHAPEL", "SPOCK", "M'BENGA"), '#3399FF', '#4C4D47')))) # Sciences, if not: Civilian/Other
 
 (MVC_plt <- 
     MVC_leaderboard %>% 
     ggplot(aes(x=count, y=fct_reorder(Character, count))) +
     geom_bar(aes(fill = div_col), stat = "identity") +
     scale_fill_identity() +
-    geom_image(aes(x=count, y=fct_reorder(Character, count), image = img), size = 0.11) +
+    geom_image(aes(x=count, y=fct_reorder(Character, count), image = img), size = 0.145) +
+    geom_point(aes(x=count+1.5, y=fct_reorder(Character, count)), size = 9, colour ="#E7FFFF") +
+    geom_text(aes(x=count+1.5, y=fct_reorder(Character, count), label=count, family = "Antonio"), size = 6, colour ="#000000") +
     # MVC 1
     # geom_text(aes(x=2, y=9, label = toupper(glue("+ 1 VOTE ({current_ep})")), family = "Antonio"), color = "#FFFF9C", size = 4) + 
     # MVC 2
@@ -362,7 +366,7 @@ MVC_leaderboard <- MVC_leaderboard %>%
       subtitle = "MVC LEADERBOARD",
       x = element_blank(),
       y = element_blank()) +
-    scale_x_continuous(limits = c(0, 16), breaks = c(0:15)) +
+    scale_x_continuous(limits = c(0, 11), breaks = c(0:10)) +
     theme_trek() +
     theme(axis.text.y = element_text(family = "Antonio", face = "bold", size = 14, colour = "#646DCC")))
 
@@ -378,31 +382,32 @@ MVC.tally <-
   summarise(count = n()) %>% 
   arrange(Episode_number) %>% 
   pivot_wider(names_from = Character, values_from = count, values_fill = 0) %>% 
-  pivot_longer(cols = 3:10, names_to = "Character", values_to = "count") %>% 
+  pivot_longer(cols = 3:8, names_to = "Character", values_to = "count") %>% 
   group_by(Character) %>% 
   mutate(total = cumsum(count),
          Character = toupper(factor(Character)),
          Episode_number = as.integer(Episode_number)) %>% 
   mutate(Character = toupper(Character)) %>% 
-  mutate(img = ifelse(Character == "ARCHER", images[1], 
-                      ifelse(Character == "DANIELS", images[2], 
-                             ifelse(Character == "MAYWEATHER", images[3],
-                                    ifelse(Character == "PHLOX", images[4],
-                                           ifelse(Character == "REED", images[5], 
-                                                  ifelse(Character == "HOSHI", images[6], 
-                                                         ifelse(Character == "SHRAN", images[7], 
-                                                                ifelse(Character == "T'POL", images[8], 
-                                                                       ifelse(Character == "TRIP", images[9], 
-                                                                              ifelse(Character == "OTHER", images[10],
+  mutate(img = ifelse(Character == "CHAPEL", images[1], 
+                      ifelse(Character == "HEMMER", images[2], 
+                             ifelse(Character == "KIRK", images[3],
+                                    ifelse(Character == "LA'AN", images[4],
+                                           ifelse(Character == "M'BENGA", images[5], 
+                                                  ifelse(Character == "ORTEGAS", images[6], 
+                                                         ifelse(Character == "PIKE", images[7], 
+                                                                ifelse(Character == "SPOCK", images[8], 
+                                                                       ifelse(Character == "UHURA", images[9], 
+                                                                              ifelse(Character == "UNA", images[10],
                                                                                      images[10])))))))))))
 
+ 
 
 
 ranks <- MVC.tally %>% 
   group_by(Episode_number) %>% 
   mutate(rank = rank(total, ties.method = "first")) 
 
-sel_chr <- c("T'POL", "ARCHER", "TRIP", "PHLOX", "HOSHI", "REED", "DANIELS", "MAYWEATHER")
+sel_chr <- c("PIKE", "UHURA", "HEMMER", "UNA", "LA'AN", "KIRK")
 
 current_rank <- 
   ranks %>% 
@@ -415,7 +420,7 @@ current_rank <- current_rank$Character
 pos <- ranks %>% 
   filter(Episode_number == current_ep_num, Character %in% sel_chr)
 
-sub_title <- glue("MVC VOTE RANKING TREND ({eps_watched}/25 EPISODES)")
+sub_title <- glue("MVC VOTE RANKING TREND ({eps_watched}/10 EPISODES)")
 
 # Highlight particular rank
 hlt_rank_plt <- function(selection){
@@ -431,7 +436,7 @@ hlt_rank_plt <- function(selection){
     geom_bump(data = deselect_ranks, aes(x=Episode_number, y=rank, colour = fct_reorder(Character, rank)), size = 0.5, alpha = 0.25) +
     geom_bump(data = select_ranks, aes(x=Episode_number, y=rank, colour = fct_reorder(Character, rank)), size = 1, alpha = 0.5) +
     scale_color_manual(values = lcars_pal1) +
-    geom_image(data=pos, aes(x=Episode_number + 0.5, y=rank, image = img), size = 0.05) +
+    geom_image(data=pos, aes(x=Episode_number + 0.5, y=rank, image = img), size = 0.1) +
     theme_trek() +
     labs(
       subtitle = sub_title,
@@ -441,11 +446,11 @@ hlt_rank_plt <- function(selection){
           legend.title = element_blank(),
           legend.key = element_rect(fill = "#000000", color = NA),
           legend.position = "right") +
-    scale_x_continuous(limits = c(0, 27), breaks = c(1:26)) 
+    scale_x_continuous(limits = c(0, 11), breaks = c(1:10)) 
 } 
 
 # MVC_plt - highlight the top 3 MVCs for this season -----
-MVC_ranks_plt <- hlt_rank_plt(c("T'POL", "ARCHER", "TRIP", "PHLOX", "HOSHI", "REED", "DANIELS", "MAYWEATHER"))
+MVC_ranks_plt <- hlt_rank_plt(c("PIKE", "UHURA", "HEMMER", "UNA", "LA'AN", "KIRK"))
 
 # patch these plots together ---------------------------------------------------
 
@@ -453,41 +458,7 @@ MVC_plt <- (MVC_plt | MVC_ranks_plt) + plot_annotation(title = '',
                                                        subtitle = "",
                                                        caption = "",theme=theme_trek_header())  
 
-ggsave("star_trek_TNC/exports-ent-s1/tng_s1_MVC-wotitle.png",width = 48, height = 24, units = "cm",  dpi = 100) 
-
-# animate the MVC leaderboard --------------------------------------------------
-library(gganimate)
-ranks <- ranks %>% 
-  mutate(div_col = ifelse(Character %in% c("PICARD", "LA FORGE", "RIKER"), '#CD6363', # Command
-                          ifelse(Character %in% c("DATA", "WORF"), '#B5A424', # Ops / Security
-                                 ifelse(Character %in% c("TROI", "B.CRUSHER"), '#3399FF', '#4C4D47')))) # Sciences, if not: Civilian/Other
-
-anim <- 
-  ranks %>% 
-  ggplot(aes(rank, group = Character)) +
-  geom_tile(aes(y = total/2, 
-                height = total,
-                width = 0.9, fill = div_col), alpha = 0.9) +
-  scale_fill_identity() +
-  geom_text(aes(y = 0, label = Character), colour = "#FFFFFF", family = "Antonio", size = 4, hjust = -0.1) +
-  geom_image(aes(y=total + 0.6, image = img), size = 0.09) +
-  coord_cartesian(clip = "off", expand = FALSE) +
-  scale_y_continuous(limits = c(0, 12), breaks = c(1,2,3,4,5,6,7,8,9,10,11)) +
-  coord_flip() +
-  theme_trek() +
-  theme(axis.text.y = element_blank()) +
-  labs(title = "THE NEXT GENERATION", 
-       subtitle = "EPISODE NUMBER: {closest_state}/25", x = "", y= "") +
-  transition_states(Episode_number, 
-                    transition_length = 10,
-                    state_length = 5) +
-  ease_aes('cubic-in-out')
-
-#animate(anim, fps = 25,
-#        duration = 10,
-#        width = 400,
-#        height = 400,
-#        end_pause = 60)
+ggsave("star_trek_TNC/exports-snw-s1/tng_s1_MVC-wotitle.png",width = 48, height = 24, units = "cm",  dpi = 100) 
 
 # cluster analysis of episode rankings -----------------------------------------
 
@@ -512,8 +483,8 @@ cluster_plot <-
   ggplot() +
   stat_density_2d(aes(x=TNC, y=IMDB), colour = "#46616E") +
   annotate(geom = "text", x=-2.2, y=3.2 ,label=cluster_caption, size=5, colour="#E7FFFF", family = "Antonio", hjust=0, vjust=1, lineheight = 1.3) +
-  annotate("text", x=2, y=2, size = 8, colour = cluster_txtcol, label = "ICED TEA", fontface = 2, family = "Antonio") +
-  annotate("text", x=1, y=1, size = 8, colour = cluster_txtcol, label = "LEMON WATER", fontface = 2, family = "Antonio") +
+  annotate("text", x=2, y=2, size = 8, colour = cluster_txtcol, label = "ACHINGLY\nBEAUTIFUL", fontface = 2, family = "Antonio") +
+  annotate("text", x=1, y=1, size = 8, colour = cluster_txtcol, label = "PIKE'S PEAK", fontface = 2, family = "Antonio") +
   annotate("text", x=0, y=0, size = 8, colour = cluster_txtcol, label = "NEUTRAL ZONE", fontface = 2, family = "Antonio") +
   annotate("text", x=-1, y=-1, size = 8, colour = cluster_txtcol, label = "BADLANDS", fontface = 2, family = "Antonio") +
   annotate("text", x=-2, y=-2, size = 8, colour = cluster_txtcol, label = "HELL", fontface = 2, family = "Antonio") +
@@ -680,7 +651,8 @@ top3_plt_facet <-
   geom_bar(aes(fill = tnc_col), stat = "identity") +
   scale_fill_identity() +
   geom_text(aes(x=0.1, y=reorder_within(Episode_name, value, rating), label = (glue("{Episode_name}")), family = "Antonio"), color = "#000000", size = 5, hjust = 0) +
-  geom_text(aes(x=value + 0.5, y=reorder_within(Episode_name, value, rating), label = round(value,1)), family="Antonio", colour = "#FFFF33", size = 5) +
+  geom_point(aes(x=value - 1, y=reorder_within(Episode_name, value, rating)), colour = "#000000", size = 11) +
+  geom_text(aes(x=value - 1, y=reorder_within(Episode_name, value, rating), label = round(value,1)), family="Antonio", colour = "#FFFF33", size = 5) +
   labs(
     subtitle = "TOP 3 EPISODES",
     x = element_blank(), 
@@ -705,7 +677,8 @@ top_episode <-
   geom_image(aes(x=1, y=fct_reorder(rating, value), image = img), size = 0.15) +
   geom_text(aes(x=2, y=fct_reorder(rating, value), label = (glue("{Episode_name}")), family = "Antonio"), color = "#000000", size = 5, hjust = 0) +
   # extra text annotation for Andy's joint favourite, "Duet" which he also scored 9.5
-  geom_text(aes(x=value + 0.5, y=fct_reorder(rating, value), label = round(value,1)), family="Antonio", colour = "#FFFF33", size = 5) +
+  geom_point(aes(x=value -1, y=fct_reorder(rating, value)), colour = "#000000", size = 11) +
+  geom_text(aes(x=value -1, y=fct_reorder(rating, value), label = round(value,1)), family="Antonio", colour = "#FFFF33", size = 5) +
   labs(
     subtitle = "TOP EPISODES",
     x = element_blank(), 
@@ -724,17 +697,17 @@ font_add("Star Trek TNG-Title", "/Users/tristanlouth-robins/Library/Fonts/Star T
 showtext::showtext_auto()
 
 summary <- str_wrap(glue("The hosts Season {data$Season[1]} scores matched or were very close on {compare.AndyMatt$count[2]} occassions, {compare.AndyMatt$prop[2]}% 
-                                      of the time and Andy consistently scored higher than Matt {scored.AndyMatt$count[1]} times ({scored.AndyMatt$prop[1]}%) compared to only 
+                                      of the time. Andy scored higher than Matt {scored.AndyMatt$count[1]} times ({scored.AndyMatt$prop[1]}%) compared to  
                                       {scored.AndyMatt$count[3]} instances when Matt scored higher than Andy. Their average scores were very close to each other 
                                       with: {round(summary_stats$mean[2],1)} (Andy) and {round(summary_stats$mean[4],1)} (Matt.) The TNC/IMDb Season {data$Season[1]} 
-                                      scores matched or were very close on only {compare.TNCIMDB$count[1]} occassions, {compare.TNCIMDB$prop[1]}% of the time and the IMDb scores 
-                                      were significantly higher than the joint TNC score the majority of the time ({scored.TNCIMDB$count[1]}/25, {scored.TNCIMDB$prop[1]}%) compared 
-                                      to only {scored.TNCIMDB$count[3]} instances when the joint TNC score was marginally higher than that of IMDb ('The Andorian Incident' and 'Dear Doctor').
+                                      scores matched or were very close on {compare.TNCIMDB$count[1]} occassions, {compare.TNCIMDB$prop[1]}% of the time and the IMDb scores 
+                                      were significantly higher than the joint TNC score the majority of the time ({scored.TNCIMDB$count[1]}/10, {scored.TNCIMDB$prop[1]}%) compared 
+                                      to only {scored.TNCIMDB$count[2]} instances when the joint TNC score was marginally higher than that of IMDb ('Strange New Worlds' and 'Spock Amok').
                                       The average scores for this season were: {round(summary_stats$mean[3],1)} (TNC) and {round(summary_stats$mean[1],1)} (IMDb)"), 200)
 
 
 # set up a base layer --
-title <- "STAR TREK: THE NEXT CONVERSATION - ENTERPRISE: SEASON 1"
+title <- "STAR TREK: THE NEXT CONVERSATION - STRANGE NEW WORLDS: SEASON 1"
 caption <- "BROUGHT TO YOU BY TRISTAN LOUTH-ROBINS. GITHUB: https://github.com/TristanLouthRobins"
 plot.bg <- "#000000"
 
@@ -749,7 +722,7 @@ base <- ggplot() +
         plot.margin = margin(1,1,1,1, "cm"),
         plot.background = element_rect(fill = "#000000", colour = "#000000"))
 
-tncents1plt <- 
+tncsnws1plt <- 
   base +
   inset_element(ep_ratings_plt, left = 0.01, right = 0.601, top = 0.99, bottom = 0.60) +
   inset_element(all_rating_plt, left = 0.605, right = 0.995, top = 0.99, bottom = 0.60) +
@@ -758,6 +731,6 @@ tncents1plt <-
   inset_element(top3_plt_facet, left = 0.01, right = 0.48, top = 0.19, bottom = 0.01) +
   inset_element(top_episode, left = 0.481, right = 0.6, top = 0.19, bottom = 0.01)
 
-tncents1plt
+tncsnws1plt
 
-ggsave("star_trek_TNC/exports-ent-s1/tnc_ent_s1.png", plot = tncents1plt, width = 80, height = 60, units = "cm", dpi = 100) 
+ggsave("star_trek_TNC/exports-snw-s1/tnc_snw_s1.png", plot = tncsnws1plt, width = 80, height = 60, units = "cm", dpi = 100) 
