@@ -30,7 +30,8 @@ data <-
          Andy_MVC = factor(Andy_MVC),
          Matt_MVC = factor(Matt_MVC),
          Andy_Watch = factor(Andy_Watch),
-         Matt_Watch = factor(Matt_Watch))
+         Matt_Watch = factor(Matt_Watch),
+         TNC = as.double(TNC))
 
 # add new variables for character's Division (Command, Ops, Sciences, Civilian, Other) --
 var.cmd <- c("Pike", "Una", "Ortegas", "Kirk")
@@ -355,7 +356,7 @@ MVC_leaderboard <- MVC_leaderboard %>%
     geom_bar(aes(fill = div_col), stat = "identity") +
     scale_fill_identity() +
     geom_image(aes(x=count, y=fct_reorder(Character, count), image = img), size = 0.145) +
-    geom_point(aes(x=count+1.5, y=fct_reorder(Character, count)), size = 9, colour ="#E7FFFF") +
+    geom_point(aes(x=count+1.5, y=fct_reorder(Character, count)), size = 12, colour ="#E7FFFF") +
     geom_text(aes(x=count+1.5, y=fct_reorder(Character, count), label=count, family = "Antonio"), size = 6, colour ="#000000") +
     # MVC 1
     # geom_text(aes(x=2, y=9, label = toupper(glue("+ 1 VOTE ({current_ep})")), family = "Antonio"), color = "#FFFF9C", size = 4) + 
@@ -693,7 +694,7 @@ top_episode
 ggsave("star_trek_TNC/exports-snw-s1/top_episode.png",width = 12, height = 12, units = "cm",  dpi = 100) 
 
 # patch EVERYTHING together ----------------------------------------------------
-font_add("Star Trek TNG-Title", "/Users/tristanlouth-robins/Library/Fonts/Star Trek TNG-Title Regular.ttf")
+font_add("Trek", "/Users/tristanlouth-robins/Library/Fonts/TOS_Title.ttf")
 showtext::showtext_auto()
 
 summary <- str_wrap(glue("The hosts Season {data$Season[1]} scores matched or were very close on {compare.AndyMatt$count[2]} occassions, {compare.AndyMatt$prop[2]}% 
@@ -716,7 +717,7 @@ base <- ggplot() +
        subtitle = summary,
        caption = caption) +
   theme_trek() +
-  theme(plot.title = element_text(family = "Jefferies Extended", size = 36, colour = "#3399FF", margin=margin(0,0,10,0)),
+  theme(plot.title = element_text(family = "Trek", size = 36, colour = "#3399FF", margin=margin(0,0,10,0)),
         plot.subtitle = element_text(family = "Antonio", size = 24, colour = "#F7B05A", margin=margin(10,0,5,0)),
         plot.caption = element_text(family = "Antonio", size = 16, colour = "#99CCFF"),
         plot.margin = margin(1,1,1,1, "cm"),
@@ -734,3 +735,4 @@ tncsnws1plt <-
 tncsnws1plt
 
 ggsave("star_trek_TNC/exports-snw-s1/tnc_snw_s1.png", plot = tncsnws1plt, width = 80, height = 60, units = "cm", dpi = 100) 
+
