@@ -3,6 +3,12 @@ A repo for misc. data analysis (mostly Star Trek: TNC stats)
 
 For example, here's some viz I generated from my dataset for the podcast, Star Trek - The Next Conversation.
 
+## Analysis of all first seasons of Trek covered by TNC
+![s1EDA-showcase](https://github.com/TristanLouthRobins/Miscellaneous_EDA/assets/62044678/4ed6069c-9195-4903-87dc-6c40126fe676)
+
+## Trek SNW Season 1 inforgraphic
+![tnc_snw_s1](https://github.com/TristanLouthRobins/Miscellaneous_EDA/assets/62044678/19ce0f42-6d2d-40b3-bcfe-da74d76b1d5d)
+
 ## Trek DS9 Season 1 infographic.
 ![tnc_ds9_s1](https://github.com/TristanLouthRobins/Miscellaneous_EDA/assets/62044678/0caedd58-c113-4bad-a5bd-5685cd159582)
 
