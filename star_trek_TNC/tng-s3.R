@@ -6,7 +6,7 @@
 library(tidyverse)
 
 # import dataset ---------------------------------------------------------------
-data <- read_csv("star_trek_TNC/data/tnc.csv") %>% 
+data <- read_csv("data/tnc.csv") %>% 
   filter(Series == "TNG",
          Season == 3)
 
@@ -108,19 +108,19 @@ font_add("Antonio", "/Users/tristanlouth-robins/Library/Fonts/Antonio-VariableFo
 
 # create a vector of image 'headshots' of TNG S3 characters -----------------------
 images_tng <- c(
-  "star_trek_TNC/images/headshots/tng-s3/barclay.jpg",
-  "star_trek_TNC/images/headshots/tng-s3/bcrusher.jpg",
-  "star_trek_TNC/images/headshots/tng-s3/data.jpg",
-  "star_trek_TNC/images/headshots/tng-s3/guinan.jpg",
-  "star_trek_TNC/images/headshots/tng-s3/laforge.jpg",
-  "star_trek_TNC/images/headshots/tng-s3/obrien.jpg",
-  "star_trek_TNC/images/headshots/tng-s3/picard.jpg",
-  "star_trek_TNC/images/headshots/tng-s3/riker.jpg",
-  "star_trek_TNC/images/headshots/tng-s3/shelby.jpg",
-  "star_trek_TNC/images/headshots/tng-s3/tam.jpg",
-  "star_trek_TNC/images/headshots/tng-s3/troi.jpg",
-  "star_trek_TNC/images/headshots/tng-s3/wcrusher.jpg",
-  "star_trek_TNC/images/headshots/tng-s3/worf.jpg"
+  "images/headshots/tng-s3/barclay.jpg",
+  "images/headshots/tng-s3/bcrusher.jpg",
+  "images/headshots/tng-s3/data.jpg",
+  "images/headshots/tng-s3/guinan.jpg",
+  "images/headshots/tng-s3/laforge.jpg",
+  "images/headshots/tng-s3/obrien.jpg",
+  "images/headshots/tng-s3/picard.jpg",
+  "images/headshots/tng-s3/riker.jpg",
+  "images/headshots/tng-s3/shelby.jpg",
+  "images/headshots/tng-s3/tam.jpg",
+  "images/headshots/tng-s3/troi.jpg",
+  "images/headshots/tng-s3/wcrusher.jpg",
+  "images/headshots/tng-s3/worf.jpg"
 )
 
 # apply cropcircles to create circular images representing MVCs ----------------
@@ -631,10 +631,10 @@ ggsave("star_trek_TNC/exports-tng-s3/final_s3_all_order_by_scores.png",width = 2
 # top 3 episodes  --------------------------------------------------------------
 # create a vector of image 'headshots' of TNC/IMDb indicative images -----------
 images_tnc <- c(
-  "star_trek_TNC/images/tnc_headshots/secunda.jpg",
-  "star_trek_TNC/images/tnc_headshots/mira.jpg",
-  "star_trek_TNC/images/tnc_headshots/imdb.jpg",
-  "star_trek_TNC/images/tnc_headshots/tnc.jpg")
+  "images/tnc_headshots/secunda.jpg",
+  "images/tnc_headshots/mira.jpg",
+  "images/tnc_headshots/imdb.jpg",
+  "images/tnc_headshots/tnc.jpg")
 
 # apply cropcircles to create circular images representing MVCs --
 image_tnc_df <- tibble(y = 1:4, images = images_tnc) %>% 
@@ -694,7 +694,7 @@ top3_plt_facet <-
   ggplot(aes(x=value, y=reorder_within(Episode_name, value, rating))) +
   geom_bar(aes(fill = tnc_col), stat = "identity") +
   scale_fill_identity() +
-  geom_text(aes(x=0.1, y=reorder_within(Episode_name, value, rating), label = (glue("{Episode_name}")), family = "Antonio"), color = "#000000", size = 5, hjust = 0) +
+  geom_text(aes(x=0.1, y=reorder_within(Episode_name, value, rating), label = (glue("{Episode_name}")), family = "Antonio"), color = "#000000", size = 3, hjust = 0) +
   geom_point(aes(x=value - 1, y=reorder_within(Episode_name, value, rating)), colour = "#000000", size = 11) +
   geom_text(aes(x=value - 1, y=reorder_within(Episode_name, value, rating), label = round(value,1)), family="Antonio", colour = "#FFFF33", size = 5) +
   labs(
@@ -719,7 +719,7 @@ top_episode <-
   geom_bar(aes(fill = tnc_col), stat = "identity") +
   scale_fill_identity() +
   geom_image(aes(x=1, y=fct_reorder(rating, value), image = img), size = 0.15) +
-  geom_text(aes(x=2, y=fct_reorder(rating, value), label = (glue("{Episode_name}")), family = "Antonio"), color = "#000000", size = 5, hjust = 0) +
+  geom_text(aes(x=2, y=fct_reorder(rating, value), label = (glue("{Episode_name}")), family = "Antonio"), color = "#000000", size = 4, hjust = 0) +
   # extra text annotation for Andy's joint favourite, "Duet" which he also scored 9.5
   geom_point(aes(x=value -1, y=fct_reorder(rating, value)), colour = "#000000", size = 11) +
   geom_text(aes(x=value -1, y=fct_reorder(rating, value), label = round(value,1)), family="Antonio", colour = "#FFFF33", size = 5) +
@@ -745,7 +745,7 @@ tng_summary3 <- str_wrap(glue("The hosts Season {data$Season[1]} scores matched 
                                       instances when Matt scored higher than Andy. Their average scores were close to each other with: {round(summary_stats$mean[2],1)} (Andy) 
                                       and {round(summary_stats$mean[4],1)} (Matt.) The TNC/IMDb Season {data$Season[1]} scores matched or were very close on only {compare.TNCIMDB$count[2]} occassions, 
                                       {compare.TNCIMDB$prop[2]}% of the time and the IMDb scores were overwhelmingly higher than the joint TNC score ({scored.TNCIMDB$count[1]}/25, 
-                                      {scored.TNCIMDB$prop[1]}%) compared to only {scored.TNCIMDB$count[2]} instances when the joint TNC score matched that of IMDb ('A Matter of Honour').
+                                      {scored.TNCIMDB$prop[1]}%) compared to only {scored.TNCIMDB$count[2]} instances when the joint TNC score matched that of IMDb.
                                       The average scores for this season were: {round(summary_stats$mean[3],1)} (TNC) and {round(summary_stats$mean[1],1)} (IMDb)"), 200)
 
 
