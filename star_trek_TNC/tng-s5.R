@@ -565,13 +565,14 @@ all_rating_plt <-
   mutate(Episode_name = toupper(Episode_name)) %>% 
   group_by(Episode_name, Episode_number) %>% 
   summarise(Weighted = mean(Rating)) %>% 
+  mutate(comboscore_col = ifelse(Weighted < 6, "#FFFF33", "#000000")) %>% 
   # visualise
   ggplot(aes(fill = Weighted)) +
   geom_bar(aes(x=Weighted, y=fct_reorder(Episode_name, Episode_number)), stat = "identity", position = "dodge") +
   scale_fill_gradient(low = "#CD6363", high = "#99FF66") + 
   geom_vline(aes(xintercept = overall_mean, colour=Weighted, alpha = 0.5), size = 1) +
   scale_colour_gradient(low = "#CD6363", high = "#99FF66") + 
-  geom_text(aes(x=Weighted + 0.5, y=fct_reorder(Episode_name, Episode_number), label = round(Weighted,1)), family="Antonio", colour = "#FFFF33", size = 8) +
+  geom_text(aes(x=Weighted - 1, y=fct_reorder(Episode_name, Episode_number), label = round(Weighted,1)), family="Antonio", size = 6) +
   #  geom_vline(xintercept = summary_stats$mean[2], colour = "#FFCC33", size = 1, alpha = 0.7) +
   labs(
     subtitle = "EPISODE RATINGS - MATT, ANDY, JOINT TNC AND IMDB AVERAGED TOGETHER",
@@ -604,7 +605,7 @@ all_rating_plt_by_scores <-
   scale_fill_gradient(low = "#CD6363", high = "#99FF66") + 
   geom_vline(aes(xintercept = overall_mean, colour=Weighted, alpha = 0.5), size = 1) +
   scale_colour_gradient(low = "#CD6363", high = "#99FF66") + 
-  geom_text(aes(x=Weighted + 0.5, y=fct_reorder(Episode_name, Episode_number), label = round(Weighted,1)), family="Antonio", colour = "#FFFF33", size = 8) +
+  geom_text(aes(x=Weighted - 1, y=fct_reorder(Episode_name, Episode_number), label = round(Weighted,1)), family="Antonio", colour = "#FFFF33", size = 7) +
   #  geom_vline(xintercept = summary_stats$mean[2], colour = "#FFCC33", size = 1, alpha = 0.7) +
   labs(
     subtitle = "EPISODE RATINGS - MATT, ANDY, JOINT TNC AND IMDB AVERAGED TOGETHER",

@@ -1,12 +1,14 @@
 library(tidyverse)
 library(ggplot2)
 
+calc_population(272, percentages)
+
 poll <- tibble(score = c(1:10), n = c(3,14,25,25,35,68,100,64,17,7))
 
 ggplot(poll) +
   geom_histogram(aes(x = score, weight = n), bins = 10)
 
-scores <- c(rep(1,3),
+scores_e3 <- c(rep(1,3),
             rep(2,14),
             rep(3,25),
             rep(4,25),
@@ -16,6 +18,12 @@ scores <- c(rep(1,3),
             rep(8,64),
             rep(9,17),
             rep(10,7))
+
+df <- as.data.frame(table(scores))
+df
+
+mean(scores_e3)
+median(scores_e3)
 
 quantile(scores, probs = c(0, 0.25, 0.5, 0.75, 1))
 
