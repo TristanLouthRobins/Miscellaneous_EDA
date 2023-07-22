@@ -2,7 +2,7 @@
 # Hosted by Matt Mira and Andy Secunda -----------------------------------------
 # This EDA script is for their episodes reviewing Star Trek: TNG ---------------
 # Podcast episode time line ----------------------------------------------------
-# Latest update: v1.0 (14 July 2023) ------------------------------------------
+# Latest update: v1.0 (14 July 2023) -------------------------------------------
 library(tidyverse)
 library(showtext)
 library(patchwork)
@@ -96,6 +96,7 @@ pod_count_covid %>%
 pod_freq <- 
 ggplot(pod_count) +
   geom_point(aes(x=date, y=count), colour = "#FFF000") +
+  geom_smooth(se = F, aes(x=date, y=count)) +
   geom_vline(xintercept = as.Date("2020-03-11"), colour = "#FFCC33", size = 0.5, alpha = 0.7) +
   annotate(geom = "text", x=as.Date("2020-03-11"), y=12, label="COVID-19 Pandemic declared", size=4, colour="#E7FFFF", family = "Antonio", hjust=1.05, vjust=1, lineheight = 1.3) +
   ylim(0, 13) +
@@ -151,6 +152,7 @@ pod_count.free <- data.free %>%
 pod_freq.free <- 
   ggplot(pod_count.free) +
   geom_point(aes(x=date, y=count), colour = "#FFF000") +
+  geom_smooth(se = F, aes(x=date, y=count)) +
   geom_vline(xintercept = as.Date("2020-03-11"), colour = "#FFCC33", size = 0.5, alpha = 0.7) +
   annotate(geom = "text", x=as.Date("2020-03-11"), y=12, label="COVID-19 Pandemic declared", size=4, colour="#E7FFFF", family = "Antonio", hjust=1.05, vjust=1, lineheight = 1.3) +
   ylim(0, 13) +
