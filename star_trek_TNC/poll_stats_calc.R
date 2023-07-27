@@ -3,14 +3,14 @@ library(ggplot2)
 
 percentages <- c(0,
                  4,
-                 0,
+                 40,
                  8,
-                 0,
-                 4,
                  8,
-                 32,
+                 24,
                  16,
-                 28)
+                 0,
+                 0,
+                 0)
 total <- 25
 
 calc_population <- function(total_votes, percentages) {
