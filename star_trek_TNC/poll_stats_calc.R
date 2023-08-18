@@ -1,17 +1,17 @@
 library(tidyverse)
 library(ggplot2)
 
-percentages <- c(0,
+percentages <- c(1,
+                 1,
+                 2,
+                 10,
+                 18,
+                 26,
+                 20,
+                 19,
                  4,
-                 40,
-                 8,
-                 8,
-                 24,
-                 16,
-                 0,
-                 0,
-                 0)
-total <- 25
+                 1)
+total <- 250
 
 calc_population <- function(total_votes, percentages) {
   array <- c()

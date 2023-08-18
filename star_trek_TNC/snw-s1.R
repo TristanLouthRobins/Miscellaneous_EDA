@@ -8,7 +8,7 @@ library(tidyverse)
 getwd()
 
 # import dataset ---------------------------------------------------------------
-data <- read_csv("star_trek_TNC/data/tnc.csv") %>% 
+data <- read_csv("data/tnc.csv") %>% 
   filter(Series == "SNW",
          Season == 1)
 
@@ -71,6 +71,9 @@ eps_watched <- data[!is.na(data$Andy_rating),] %>%
               sd = sd(Value),
               median = median(Value)) %>% 
     arrange(desc(mean)))
+
+mean(summary_stats$mean)
+  
 
 # creating the MVC leaderboard -------------------------------------------------
 MVC_leaderboard <- data %>% 
