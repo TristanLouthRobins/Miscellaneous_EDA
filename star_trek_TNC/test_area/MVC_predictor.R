@@ -50,9 +50,18 @@ MVC_leaderboard <- data %>%
   rename("Character" = "value") %>% 
   select(Host, Character) %>% 
   group_by(Character) %>% 
-  summarise(count = n()) %>% 
+  summarise(count = n()) %>%  
+  mutate(ep_appearances = eps_watched) %>% 
   arrange(desc(count)) %>% 
   na.omit()
+
+# create ep count for Seven
+MVC_leaderboard$ep_appearances[9] <- (eps_watched - 66)
+# create ep count for Kes
+MVC_leaderboard$ep_appearances[5] <- 69
+
+MVC_leaderboard %>% 
+  mutate(vote_freq = round(ep_appearances / count, 1))
 
 t <- 
 data %>% 
@@ -117,7 +126,8 @@ predictions
 
 ######---------------------------#######
 
-model_data
+model_data %>% 
+  filter(Character == "JANEWAY")
 
 seven_data <- 
   model_data %>% 
@@ -138,3 +148,19 @@ predict_total_votes <- function(data, character_name, ep) {
 }
 
 (prediction <- predict_total_votes(model_data, "JANEWAY", 100))
+
+##
+
+your_data <- model_data
+
+your_data$JaneVotes <- ifelse(your_data$Character == 'JANEWAY' & your_data$count == 0, 1, 0)
+
+(your_data <- your_data %>%
+  mutate(JaneCumSum = cumsum(JaneVotes)) %>%
+  group_by(JaneCumSum) %>%
+  filter(Character == "JANEWAY") %>% 
+  mutate(Interval = c(0, diff(row_number()))))
+
+
+view(your_data)
+
