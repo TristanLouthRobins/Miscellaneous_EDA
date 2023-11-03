@@ -1,17 +1,17 @@
 library(tidyverse)
 library(ggplot2)
 
-percentages <- c(1,
-                 1,
+percentages <- c(0,
+                 0,
+                 0,
                  2,
-                 10,
-                 18,
-                 26,
-                 20,
-                 19,
-                 4,
-                 1)
-total <- 250
+                 12,
+                 32,
+                 31,
+                 17,
+                 6,
+                 0)
+total <- 65
 
 calc_population <- function(total_votes, percentages) {
   array <- c()
@@ -27,8 +27,8 @@ pop
 
 popDf <- tibble(score = c(1:10), n = pop)
 
-ggplot(popDf) +
-  geom_histogram(aes(x = score, weight = n), bins = 10)
+#ggplot(popDf) +
+#  geom_histogram(aes(x = score, weight = n), bins = 10)
 
 scores <- function(df){
   freq <- c()
