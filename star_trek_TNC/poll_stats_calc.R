@@ -1,17 +1,18 @@
 library(tidyverse)
 library(ggplot2)
 
-percentages <- c(0,
+percentages <- c(2,
                  0,
                  0,
                  2,
-                 12,
-                 32,
-                 31,
-                 17,
                  6,
-                 0)
-total <- 65
+                 6,
+                 21,
+                 31,
+                 23,
+                 6,
+                 4)
+total <- 52
 
 calc_population <- function(total_votes, percentages) {
   array <- c()
@@ -25,16 +26,17 @@ calc_population <- function(total_votes, percentages) {
 pop <- calc_population(total, percentages)
 pop
 
-popDf <- tibble(score = c(1:10), n = pop)
+popDf <- tibble(score = c(0:10), n = pop)
 
 #ggplot(popDf) +
 #  geom_histogram(aes(x = score, weight = n), bins = 10)
 
 scores <- function(df){
   freq <- c()
-  for (i in 1:10){
+  for (i in 1:11){
     freq <- c(freq, rep(i, df[i,2]))
   }
+  freq <- freq - 1
   return(freq)
 }
 
@@ -42,6 +44,3 @@ scores <- scores(popDf)
 
 mean(scores)
 median(scores)
-
-quantile(scores, probs = c(0, 0.25, 0.5, 0.75, 1))
-quantile(scores, probs)
