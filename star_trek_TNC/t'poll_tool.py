@@ -56,12 +56,14 @@ def clear_fields():
 
 # GUI setup
 root = tk.Tk()
-root.title("Score Calculator")
+root.title("T'Poll Score Calculator")
+# Adjust size
+root.geometry("400x400")
 
 # Create entry widgets for percentages and votes
 entries = []
 for i in range(11):
-    tk.Label(root, text=f"Percentage for score {i}:").grid(row=i, column=0)
+    tk.Label(root, text=f"Score {i}:").grid(row=i, column=0)
     entry = tk.Entry(root)
     entry.grid(row=i, column=1)
     entries.append(entry)
@@ -71,16 +73,16 @@ votes_entry = tk.Entry(root)
 votes_entry.grid(row=11, column=1)
 
 # Submit button
-submit_btn = tk.Button(root, text="Calculate", command=lambda: calculate_scores(votes_entry.get(), [e.get() for e in entries]))
-submit_btn.grid(row=12, column=0, columnspan=2)
+submit_btn = tk.Button(root, text="Execute", command=lambda: calculate_scores(votes_entry.get(), [e.get() for e in entries]))
+submit_btn.grid(row=12, column=0, columnspan=1, pady=(10, 5))
 
 # Clear button
 clear_btn = tk.Button(root, text="Clear", command=clear_fields)
-clear_btn.grid(row=12, column=1, columnspan=2)
+clear_btn.grid(row=12, column=1, columnspan=1, pady=(10, 5))
 
 # Result display area
 result_label = tk.Label(root, text="")
-result_label.grid(row=13, column=0, columnspan=2)
+result_label.grid(row=14, column=0, columnspan=2)
 
 # Run the GUI
 root.mainloop()
